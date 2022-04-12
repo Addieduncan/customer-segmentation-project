@@ -1,9 +1,4 @@
 
-
-
-
-
-
 def make_clean_data(pd_data,verbose = False):
     """
     -Given any dataframe, removes rows with nan or none, examining 
@@ -59,6 +54,7 @@ def select_features(pd_data,which = 'basic'):
     
     which:: <string> - determine which set of features to use 
     """
+    features = pd_data.columns 
     ft_keep = list()
     
     #Here are the features related to the absolute amount of money; some of them can be used as LABEL
@@ -78,22 +74,22 @@ def select_features(pd_data,which = 'basic'):
     if which == 'freq':
         ft_keep = ft_freq[:]
     elif which == 'all':
-        ft_keep = ft_basic[:] + ft_freq[:]
+        ft_keep = ft_basic[:] + ft_freq
+    print('Features retained are: '+which+'\n\n')
 
     #Here are the features haven't been used
     ft_unused = set(list(features))-set(ft_keep)
+    ft_unused = list(ft_unused)
 
-    print('Here are the features related to $$:\n', ft_basic,'\n')
+    print('Here are the features related to dollars:\n', ft_basic,'\n')
     print('Here are the features related to frequency: \n',ft_freq,'\n')
     print('Here are the features not used: \n', ft_unused)
-
     
-    if which == 'basic':
-        
-        
-        
-        
-        
+    
+    #Now slice the data according to the desired features
+    keep_data = pd_data[ft_keep]
+
+    return keep_data,ft_keep[:],list(ft_unused),features[:]
 
 if __name__ == "__main__":
 
