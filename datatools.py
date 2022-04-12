@@ -1,3 +1,5 @@
+import pandas as pd 
+import numpy as np 
 
 def make_clean_data(pd_data,verbose = False):
     """
@@ -13,7 +15,7 @@ def make_clean_data(pd_data,verbose = False):
     features = pd_data.columns 
     missing_dict = dict()
     bad_rows = list()
-    
+   
     for ft in features:
         feature_series = pd_data[ft]
         missing_bool = feature_series.isnull()
@@ -21,6 +23,7 @@ def make_clean_data(pd_data,verbose = False):
         #Calculate the percentage of that feature which was True under .isnull()
         missing_dict[ft] = 100*float(np.sum(missing_bool)/feature_series.shape[0])
         
+
         if not bad_indices.empty:
             if verbose:
                 print("Issue Feature:\n", ft,'\n', bad_indices, '\n Num of null=', len(bad_indices), '\n\n')
@@ -74,9 +77,9 @@ def select_features(pd_data,which = 'basic'):
     if which == 'freq':
         ft_keep = ft_freq[:]
     elif which == 'all':
-        ft_keep = ft_basic[:] + ft_freq
+        ft_keep = ft_basic[:] + ft_freq[:]
     print('Features retained are: '+which+'\n\n')
-
+    
     #Here are the features haven't been used
     ft_unused = set(list(features))-set(ft_keep)
     ft_unused = list(ft_unused)
@@ -85,12 +88,34 @@ def select_features(pd_data,which = 'basic'):
     print('Here are the features related to frequency: \n',ft_freq,'\n')
     print('Here are the features not used: \n', ft_unused)
     
-    
     #Now slice the data according to the desired features
     keep_data = pd_data[ft_keep]
 
     return keep_data,ft_keep[:],list(ft_unused),features[:]
 
-if __name__ == "__main__":
+def remove_quantiles(pd_data,p = 1):
+    percentile = p
+    quantile = percentile / 100 
+    remove_indices = list()
+    feature_stats = dict()
+    
+    for feature in pd_data.columns:
+        feature_series = pd_data[feature]
+        quantile_filter = np.quantile(feature_series,[quantile,1-quantile])
+        feature_outside = feature_series[(feature_series < quantile_filter[0]) | (feature_series > quantile_filter[1])]
+        outside_indices = feature_outside.index 
+        remove_indices += list(feature_outside.index)
+    remove_indices = list(set(remove_indices))
+    remove_indices.sort()
+    
+    pd_data_reduced = pd_data.drop(remove_indices)
+    
+    #Calculate what percent of total data is captured in these indices
+    percent_removed = 100*(len(remove_indices)/pd_data.index.shape[0])
+    print('Percent of Data Removed Across These Quantiles Is: ', percent_removed)
+    
+    return pd_data_reduced, percent_removed  
 
-	pass 
+if __name__ == "__main__":
+    
+    pass 
