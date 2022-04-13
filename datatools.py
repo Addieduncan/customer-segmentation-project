@@ -125,13 +125,13 @@ def remove_quantiles(pd_data,p = 1):
     percentile = p
     quantile = percentile / 100 
     remove_indices = list()
-    feature_stats = dict()
+    # feature_stats = dict()
     
     for feature in pd_data.columns:
         feature_series = pd_data[feature]
         quantile_filter = np.quantile(feature_series,[quantile,1-quantile])
         feature_outside = feature_series[(feature_series < quantile_filter[0]) | (feature_series > quantile_filter[1])]
-        outside_indices = feature_outside.index 
+        # outside_indices = feature_outside.index
         remove_indices += list(feature_outside.index)
     remove_indices = list(set(remove_indices))
     remove_indices.sort()
@@ -163,6 +163,7 @@ def elbow_method(X, k_search, method = 'KMeans', plot = True):
     # if method == "kmeans":
     #     SoS = silh_score.copy()
     SoS = silh_score.copy()
+    print("Running Elbow Method...")
     for (i, k) in tqdm(enumerate(k_search), total=len(k_search)):
         if method == 'KMeans':
             kmeans = KMeans(n_clusters=int(k), random_state=0).fit(X)

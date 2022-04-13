@@ -32,3 +32,20 @@ Elbow Method
 k_search = np.linspace(start=5, stop=50, num=10)
 elbow_method(X, k_search, method = 'KMeans', plot = True)
 elbow_method(X, k_search, method = 'GM', plot = True)
+
+"""
+Remove outliers (Naive Approach)
+"""
+p = 1 # percent of upper and lower population to be removed
+data_reduced, _ = remove_quantiles(data_kept, p)
+assert np.size(data_reduced.isna().sum(axis=1).to_numpy().nonzero()[0]) == 0,  "Data still contains NaN"
+X_reduced = data_reduced.values.astype(np.float64)
+
+
+"""
+Elbow Method without Outliers
+"""
+print("OUTLIERS ARE GONE")
+k_search = np.linspace(start=5, stop=50, num=10)
+elbow_method(X_reduced, k_search, method = 'KMeans', plot = True)
+elbow_method(X_reduced, k_search, method = 'GM', plot = True)
