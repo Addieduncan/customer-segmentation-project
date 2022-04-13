@@ -144,6 +144,42 @@ def remove_quantiles(pd_data,p = 1):
     
     return pd_data_reduced, percent_removed
 
+def data_quantization(pd_data, scale =10):
+    """
+    Quantize a panda data frame into integer with new features according to the given scale.
+    e.g. if scale = 10: the new feature assign label 1 to the
+    :param pd_data:
+    :param scale:
+    :return: data_quantile: the quantized data
+             percent_of_zero: at least that much percent of feature are zeros
+    """
+    p = np.linspace(0, scale, scale+1) * 0.1
+    data_quantile = pd_data.copy()
+    percent_of_zero = {}
+    eps = 1e-5
+
+    for feature in pd_data.columns:
+        feature_new = feature + '_QUANTILE'
+        data_quantile[feature_new] = 0
+
+        for (i, quantile) in enumerate(p[:-1]):
+            quantile_filter = np.quantile(pd_data[feature], [quantile, p[i + 1]])
+            data_quantile.loc[((pd_data[feature] > quantile_filter[0]) &
+                                       (pd_data[feature] <= quantile_filter[1])), feature_new] = i+1
+
+            if i == 0 and quantile_filter[0] > 0:  # deal with 0-quantile being non-zero
+                data_quantile.loc[((pd_data[feature] >= quantile_filter[0]) &
+                                       (pd_data[feature] <= quantile_filter[1])), feature_new] = i+1
+
+            if quantile_filter[0] <= eps and quantile_filter[1] >= eps:
+                percent_of_zero[feature] = quantile
+            elif quantile_filter[0] > eps and i == 0:
+                percent_of_zero[feature] = 0
+
+        data_quantile.drop(columns = feature, axis = 1, inplace=True)
+    return data_quantile, percent_of_zero
+
+
 def elbow_method(X, k_search, method = 'KMeans', plot = True):
     """
     Elbow Method for different clustering methods with all metrics shown
