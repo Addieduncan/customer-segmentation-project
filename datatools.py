@@ -14,42 +14,62 @@ def make_clean_data(pd_data,verbose = False):
     
     features = pd_data.columns 
     missing_dict = dict()
-    bad_rows = list()
-   
-    for ft in features:
-        feature_series = pd_data[ft]
-        missing_bool = feature_series.isnull()
-        bad_indices = feature_series.index[missing_bool]
-        #Calculate the percentage of that feature which was True under .isnull()
-        missing_dict[ft] = 100*float(np.sum(missing_bool)/feature_series.shape[0])
-        
+    # bad_rows = list()
 
-        if not bad_indices.empty:
-            if verbose:
-                print("Issue Feature:\n", ft,'\n', bad_indices, '\n Num of null=', len(bad_indices), '\n\n')
-                bad_rows += list(bad_indices)
-                print('Here are Nan Indices:', bad_indices)
-            else:
-                pass
+    bad_rows_index = pd_data.isna().sum(axis=1).to_numpy().nonzero()
+    bad_feature_index = pd_data.isna().sum().to_numpy().nonzero()
+    bad_feature = pd_data.columns[bad_feature_index]
+
+    for ft in bad_feature:
+        #Calculate the percentage of that feature which was True under .isnull()
+        num_missing_bool = pd_data.isna().sum()[ft]
+        missing_dict[ft] =  num_missing_bool  / len(pd_data[ft])
+
+        if verbose:
+            print("Issue Feature:\n", ft, '\n', '\n Num of null=', num_missing_bool, '\n\n')
+        else:
+            pass
+
+    # for ft in features:
+    #     pd_data.isna().sum()
+    #     feature_series = pd_data[ft]
+    #     missing_bool = feature_series.isnull()
+    #     bad_indices = feature_series.index[missing_bool]
+    #     #Calculate the percentage of that feature which was True under .isnull()
+    #     missing_dict[ft] = 100*float(np.sum(missing_bool)/feature_series.shape[0])
+    #
+    #
+    #     if not bad_indices.empty:
+    #         if verbose:
+    #             print("Issue Feature:\n", ft,'\n', bad_indices, '\n Num of null=', len(bad_indices), '\n\n')
+    #             bad_rows += list(bad_indices)
+    #             print('Here are Nan Indices:', bad_indices)
+    #         else:
+    #             pass
             
     #Total percentage(s) of data removed
     if verbose:
-        print('Number of Removed Row Instances = \n',bad_rows,'\n ')
+        # print('Here are Nan Row Indices:', bad_rows_index[0], '\n') #maybe we don't need but I added here
+        print('Total Number of Removed Row Instances = \n', len(bad_rows_index[0]),'\n ')
         print('Percentage of Removed Features = \n',missing_dict)
     #Eliminate duplicates and sort 
-    bad_rows = list(set(bad_rows))
-    bad_rows.sort()
+    # bad_rows = list(set(bad_rows))
+    # bad_rows.sort()
 
     # Get rid of rows containing null or empty
-    clean_data = pd_data.drop(bad_rows)
+    # clean_data = pd_data.drop(bad_rows)
+    clean_data = pd_data.drop(bad_rows_index[0])
+
+    # Check if clean
+    assert np.size(clean_data.isna().sum(axis=1).to_numpy().nonzero()[0]) == 0, "Clean data still contains NaN"
 
     #Check the number of resulting data points 
-    if verbose:
-        print('Here is shape of original data:',data.shape,'\n\n')
-        print('Here is shape of the clean data:', data_clean.shape,\
-              '\n Number of Removed Instances =',len(bad_rows))
+    # if verbose:
+    #     print('Here is shape of original data:',data.shape,'\n\n')
+    #     print('Here is shape of the clean data:', data_clean.shape,\
+    #           '\n Number of Removed Instances =',len(bad_rows))
         
-    return clean_data, missing_dict, bad_rows
+    return clean_data, missing_dict, bad_rows_index
 
 def select_features(pd_data,which = 'basic'):
     """
