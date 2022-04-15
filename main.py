@@ -98,6 +98,8 @@ if __name___ == "__main__":
         """
         Remove outliers (Convert each feature into integer based on population quantization)
         """
+        """
+        """
         data_quant, percent_zero = data_quantization(data_kept)
         print('Features have at least the following percentage of being zero:\n', percent_zero)
         X_quant = data_quant.values.astype(np.float64)
