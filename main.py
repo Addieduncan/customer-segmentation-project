@@ -5,10 +5,10 @@ import os
 from datatools import make_clean_data, select_features, \
     remove_quantiles, elbow_method, data_quantization
 
-
 """
 Read Data
 """
+
 DATA_PATH = './raw_data/CreditCard_data.csv'
 
 if os.path.isfile(DATA_PATH):
@@ -19,15 +19,13 @@ else:
 SAMPLE_SIZE = 10000
 data_raw = pd.read_csv(DATA_PATH, nrows = SAMPLE_SIZE)
 
-
 """
 Preprocess Data
 """
+
 data_clean, _, _ = make_clean_data(data_raw, verbose=False)
 data_kept, _, _ = select_features(data_clean, which='basic')
-
 X = data_kept.values.astype(np.float64) # numpy array ready to be clustered
-
 
 """
 Elbow Method
@@ -35,7 +33,6 @@ Elbow Method
 k_search = np.linspace(start=5, stop=50, num=10)
 elbow_method(X, k_search, method = 'KMeans', plot = True)
 elbow_method(X, k_search, method = 'GM', plot = True)
-
 
 """
 Remove outliers (Naive Approach)
@@ -45,7 +42,6 @@ data_reduced, _ = remove_quantiles(data_kept, p)
 assert np.size(data_reduced.isna().sum(axis=1).to_numpy().nonzero()[0]) == 0,  "Data still contains NaN"
 X_reduced = data_reduced.values.astype(np.float64)
 
-
 """
 Elbow Method without Outliers
 """
@@ -54,14 +50,12 @@ k_search = np.linspace(start=5, stop=50, num=10)
 elbow_method(X_reduced, k_search, method = 'KMeans', plot = True)
 elbow_method(X_reduced, k_search, method = 'GM', plot = True)
 
-
 """
 Remove outliers (Convert each feature into integer based on population quantization)
 """
 data_quantile, percent_zero = data_quantization(data_kept)
 print('Features have at least the following percentage of being zero:\n', percent_zero)
 X_quantile = data_quantile.values.astype(np.float64)
-
 
 """
 Elbow Method without Outliers

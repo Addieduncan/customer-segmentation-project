@@ -144,6 +144,43 @@ def remove_quantiles(pd_data,p = 1):
     
     return pd_data_reduced, percent_removed
 
+def run_svd(pd_data,percent_var = 95):
+    """
+    :pd_data: the dataframe containing the 'already standardized'] data 
+    :percent_var: float - a value between [0,100]
+    """
+    #add checking if percent_var between 0 and 100 
+    
+    #Calculate the desired number of SVD components in the decomposition 
+    start_rank = (pd_data.shape[-1]-1)
+    #Make instance of SVD object class from scikit-learn and run the decomposition 
+    #Issue: scikitlearn TruncatedSVD only allows n_components < n_features (strictly)
+    SVD = TruncatedSVD(n_components = start_rank)
+    SVD.fit(data_clean)
+    X_SVD = SVD.transform(data_clean)
+    
+    #Wrap the output as a dataframe 
+    X_SVD = pd.DataFrame(X_SVD,columns = ['Singular Component '+str(i+1) for i in range(X_SVD.shape[-1])])
+    
+    #Calculate the number of components needed to reach variance threshold 
+    var_per_comp = SVD.explained_variance_ratio_
+    
+    #Calculate the total variance explainend in the first k components 
+    total_var = 100*np.cumsum(var_per_comp)
+    print('------------- SVD Output ----------------')
+    print('Percent Variance Explained By First '+str(start_rank)+' Components: ',total_var,'\n\n')
+    #rank = np.nonzero(total_var>=var_threshold)[0][0]+1
+    rank = (next(x for x, val in enumerate(total_var) if val > percent_var))
+    rank = rank+1
+    
+    if rank == 0: 
+        print('No quantity of components leq to '+str(start_rank+1)+' can explain '+str(percent_var)+'% variance.')
+    else:
+        print(str(total_var[rank-1])+'% variance '+'explained by '+str(rank)+' components. '+\
+              'Variance Threshold Was '+str(percent_var)+'.\n\n')
+    
+    return X_SVD, rank, percent_var, total_var
+
 def data_quantization(pd_data, scale =10):
     """
     Quantize a panda data frame into integer with new features according to the given scale.
