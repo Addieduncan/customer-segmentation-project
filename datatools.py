@@ -171,7 +171,7 @@ def run_svd(pd_data,percent_var = 95):
     print('Percent Variance Explained By First '+str(start_rank)+' Components: ',total_var,'\n\n')
     #rank = np.nonzero(total_var>=var_threshold)[0][0]+1
     rank = (next(x for x, val in enumerate(total_var) if val > percent_var))
-    rank = rank+1
+    rank += 1
     
     if rank == 0: 
         print('No quantity of components leq to '+str(start_rank+1)+' can explain '+str(percent_var)+'% variance.')
@@ -216,6 +216,15 @@ def data_quantization(pd_data, scale =10):
         data_quantile.drop(columns = feature, axis = 1, inplace=True)
     return data_quantile, percent_of_zero
 
+def get_elbow_index(scores, cluster_step = 1):
+    #Calculate derivative of cluster scores assuming a uniform step size
+    
+    #First derivative condition 
+    diff = (1/cluster_step)*scores[1:len(scores)]-scores[0:len(scores)-1]
+    res = next(x for x, val in enumerate(diff) if val > -1)
+    #diff2 = (1/cluster_step)*diff[1:len(scores)]-diff[0:len(scores)-1]
+    
+    return res 
 
 def elbow_method(X, k_search, method = 'KMeans', plot = True):
     """
@@ -226,9 +235,14 @@ def elbow_method(X, k_search, method = 'KMeans', plot = True):
     :param plot: (boolean) if plotting the results or not
     :return: 
     """
+    #ksearch must be linear for this to work 
+    cluster_diff = k_search[1]-k_search[0]
+    
     silh_score = np.zeros(len(k_search))
     CHindex_score = silh_score.copy()
     DBindex_score = silh_score.copy()
+    SoS = silh_score.copy()
+    
     if method == 'KMeans' or method == 'GM':
         pass
     else:
@@ -254,8 +268,12 @@ def elbow_method(X, k_search, method = 'KMeans', plot = True):
 
     metric_list = [silh_score/np.max(np.abs(silh_score)), CHindex_score/np.max(np.abs(CHindex_score)),
                    DBindex_score/np.max(np.abs(DBindex_score)), SoS/(max(np.max(SoS),0.1))]
+    
     metric_legend = ['Silhouette', 'CHindex', 'DBindex', 'SoS']
-
+    
+    elbow_index = get_elbow_index(metric_list[-1])
+    ssq_optimal_K = k_search[elbow_index]
+    
     if plot:
         if method == 'KMeans':
             m = 4

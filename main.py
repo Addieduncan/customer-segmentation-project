@@ -32,7 +32,6 @@ def run_elbow(data_set,Kmin = 5,Kmax = 50,num_K = 10):
     
 if __name___ == "__main__":
     
-  
     """
     1. Set parameters for this file run
     """
@@ -45,7 +44,7 @@ if __name___ == "__main__":
     do_quantize = True 
     remove_outliers = not do_quantize
     
-    #Apply SVD on the data?
+    #Apply SVD on the data (after quantizing / removing outliers)?
     reduce_dim = False
 
     """
@@ -72,6 +71,7 @@ if __name___ == "__main__":
     4. Elbow Method on Selected Featureds; Data Otherwise Not Modified 
     """
     if no_change:
+        
         run_elbow(X)
         
     """
