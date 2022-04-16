@@ -27,7 +27,7 @@ Set Parameters for Processing of Data
 def run_elbow(data_set,Kmin = 5,Kmax = 50,num_K = 10):
     k_search = np.linspace(start=Kmin, stop=Kmax, num= num_K)
     elbow_method(data_set,k_search, method = 'KMeans',plot = True)
-    elbow_method(X_quant, k_search, method = 'GM', plot = True)
+    elbow_method(data_set, k_search, method = 'GM', plot = True)
     return None
     
 if __name__ == "__main__":
