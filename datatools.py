@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn.cluster import KMeans
 from sklearn.mixture import GaussianMixture
+from sklearn.decomposition import TruncatedSVD
 from sklearn import metrics
 import matplotlib.pyplot as plt
 from tqdm import tqdm
@@ -156,8 +157,8 @@ def run_svd(pd_data,percent_var = 95):
     #Make instance of SVD object class from scikit-learn and run the decomposition 
     #Issue: scikitlearn TruncatedSVD only allows n_components < n_features (strictly)
     SVD = TruncatedSVD(n_components = start_rank)
-    SVD.fit(data_clean)
-    X_SVD = SVD.transform(data_clean)
+    SVD.fit(pd_data)
+    X_SVD = SVD.transform(pd_data)
     
     #Wrap the output as a dataframe 
     X_SVD = pd.DataFrame(X_SVD,columns = ['Singular Component '+str(i+1) for i in range(X_SVD.shape[-1])])
