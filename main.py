@@ -20,8 +20,6 @@ import os
 from datatools import make_clean_data, select_features, \
     remove_quantiles, elbow_method, data_quantization, run_svd
 
-
-
 """
 Set Parameters for Processing of Data 
 """
@@ -34,17 +32,24 @@ def run_elbow(data_set,Kmin = 5,Kmax = 50,num_K = 10):
     
 if __name___ == "__main__":
     
+  
+    """
+    1. Set parameters for this file run
+    """
+
+    dataset = 'basic'  #which dataset; options are 'basic', 'all', or 'freq'
+    no_change = False  #Do nothing to the data after cleaning (remove NaN, selecting features)
+     
+    #Choose only 1
     do_quantize = True 
     remove_outliers = not do_quantize
     
+    #Apply SVD before clustering?
     reduce_dim = False
-    #This sets outlier removal and quantization as alternative pathways 
-    #in the following code
 
     """
-    Read Data
+    2. Read In Data
     """
-
     DATA_PATH = './raw_data/CreditCard_data.csv'
 
     if os.path.isfile(DATA_PATH):
@@ -52,61 +57,60 @@ if __name___ == "__main__":
     else:
         raise ValueError('DATA_PATH is not valid path')
 
-    SAMPLE_SIZE = 10000
-    data_raw = pd.read_csv(DATA_PATH, nrows = SAMPLE_SIZE)
-
+    #SAMPLE_SIZE = 10000
+    data_raw = pd.read_csv(DATA_PATH)
+    
     """
-    Preprocess Data
+    3. Remove bad data values (NaN) and reduce only to valid dataset
     """
     data_valid, _, _ = make_clean_data(data_raw, verbose=False)
-    data_kept, _, _ = select_features(data_valid, which='basic')
+    data_kept, _, _ = select_features(data_valid, which= dataset)
     X = data_kept.values.astype(np.float64) # numpy array ready to be clustered
 
     """
-    Elbow Method
+    4. Elbow Method on Selected Featureds; Data Otherwise Not Modified 
     """
-    k_search = np.linspace(start=5, stop=50, num=10)
-    elbow_method(X, k_search, method = 'KMeans', plot = True)
-    elbow_method(X, k_search, method = 'GM', plot = True)
-
+    if no_change:
+        run_elbow(X)
+        
     """
-    Remove outliers (Naive Approach)
+    5.
+        (i)   Remove Outliers or to Quantize All Data; 
+        (ii)  Choose Whether To Dimension Reduce; 
+        (iii) Run Elbow Method on Resulting Data 
     """
-    
-    p = 1 # percent of upper and lower population to be removed
-    data_clean, _ = remove_quantiles(data_kept, p)
-    assert np.size(data_clean.isna().sum(axis=1).to_numpy().nonzero()[0]) == 0,  "Data still contains NaN"
-    X_clean = data_clean.values.astype(np.float64)
-    
-    """
-    Choose to Remove Outliers or to Quantize All Data  
-    """
-    if remove_outliers == True:
-        """
-        Do Dimension Reduction
-        """
-        desired_var_per = 99
-        X_red = run_svd(X_clean, percent_var = desired_var_per)
-
-        """
-        Elbow Method without Outliers
-        """
-        print("-------- Running Elbow Method on Outlier-Removed Data-----------")
-        run_elbow(X_clean)
-    
+    elif remove_outliers == True:
+        
+        p = 1 # percent of upper and lower population to be removed
+        data_clean, _ = remove_quantiles(data_kept, p)
+        assert np.size(data_clean.isna().sum(axis=1).to_numpy().nonzero()[0]) == 0,  "Data still contains NaN"
+        X_clean = data_clean.values.astype(np.float64)
+        
+        if reduce_dim == True: 
+            
+            #Run SVD and reduce to components which explain at least 99% variance 
+            
+            desired_var_per = 99
+            X_red = run_svd(X_clean, percent_var = desired_var_per)
+            
+            run_elbow(X_red)
+        else:
+            run_elbow(X_clean)
+            
+            
     elif do_quantize:
         """
-        Remove outliers (Convert each feature into integer based on population quantization)
+        Quantize Data- Convert each feature into integer based on membership in the population quantile 
         """
-        """
-        """
+        
         data_quant, percent_zero = data_quantization(data_kept)
         print('Features have at least the following percentage of being zero:\n', percent_zero)
         X_quant = data_quant.values.astype(np.float64)
         
-        if 
-        """
-        Elbow Method without Outliers
-        """
-        print("-------------------- Running Elbow Method on Quantized Data --------------")
-        run_elbow(X_quant)
+        if reduce_dim == True:
+            desired_var_per = 99
+            X_red = run_svd(X_quant,percent_var = desired_var_per)
+            run_elbow(X_red)
+        
+        elif reduce_dim == False:
+            run_elbow(X_quant)
