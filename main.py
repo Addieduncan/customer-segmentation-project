@@ -38,13 +38,14 @@ if __name___ == "__main__":
     """
 
     dataset = 'basic'  #which dataset; options are 'basic', 'all', or 'freq'
-    no_change = False  #Do nothing to the data after cleaning (remove NaN, selecting features)
+    
+    no_change = False  #Run clustering on cleaned (NaN-removed data). No touching the outliers. 
      
-    #Choose only 1
+    #Choose only one of these; run clustering on quantized data, or outlier-removed data 
     do_quantize = True 
     remove_outliers = not do_quantize
     
-    #Apply SVD before clustering?
+    #Apply SVD on the data?
     reduce_dim = False
 
     """
@@ -96,8 +97,7 @@ if __name___ == "__main__":
             run_elbow(X_red)
         else:
             run_elbow(X_clean)
-            
-            
+                      
     elif do_quantize:
         """
         Quantize Data- Convert each feature into integer based on membership in the population quantile 
