@@ -271,6 +271,7 @@ def elbow_method(X, k_search, method = 'KMeans', plot = True):
     
     metric_legend = ['Silhouette', 'CHindex', 'DBindex', 'SoS']
     
+    #get the optimal sum of squares elbow value
     elbow_index = get_elbow_index(metric_list[-1])
     ssq_optimal_K = k_search[elbow_index]
     
