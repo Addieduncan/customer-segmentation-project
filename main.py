@@ -30,7 +30,7 @@ def run_elbow(data_set,Kmin = 5,Kmax = 50,num_K = 10):
     elbow_method(X_quant, k_search, method = 'GM', plot = True)
     return None
     
-if __name___ == "__main__":
+if __name__ == "__main__":
     
     """
     1. Set parameters for this file run
@@ -73,13 +73,14 @@ if __name___ == "__main__":
     if no_change:
         
         run_elbow(X)
-        
-    """
-    5.
-        (i)   Remove Outliers or to Quantize All Data; 
-        (ii)  Choose Whether To Dimension Reduce; 
-        (iii) Run Elbow Method on Resulting Data 
-    """
+
+        """
+        5.
+            (i)   Remove Outliers or to Quantize All Data; 
+            (ii)  Choose Whether To Dimension Reduce; 
+            (iii) Run Elbow Method on Resulting Data 
+        """
+
     elif remove_outliers == True:
         
         p = 1 # percent of upper and lower population to be removed
