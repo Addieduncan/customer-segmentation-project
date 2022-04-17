@@ -199,7 +199,7 @@ def data_quantization(pd_data, scale =10):
     data_quantile = pd_data.copy()
     percent_of_zero = {}
     eps = 1e-5
-
+    
     for feature in pd_data.columns:
         feature_new = feature + '_QUANTILE'
         data_quantile[feature_new] = 0
@@ -243,6 +243,35 @@ def get_elbow_index(scores):
     
     return idxOfBestPoint
 
+def plot_clustering(Xin, labels, num_comps = 0, savedir= None):
+    """
+    :Xin: <np.ndarray, shape (n,d)> - pca transformed data 
+    same rows in order of data matrix 
+    :labels: (np.ndarray)- labels from clustering algorithm for each row (data point)
+    """
+    print('Here We Run Plot Clustering')
+    #Get ordered list of possible cluster labels 
+    print('here are the cluster labels',labels)
+    clusters = list(set(labels.tolist()))
+    clusters.sort()
+    print('Here is the restructured list',clusters)
+    fig,ax = plt.subplots(1)
+    cmap  = plt.get_cmap('tab20')
+    idx = int(0) 
+    
+    assert (num_comps <= Xin.shape[-1]), 'Number of Components to \
+        Plot must Be Lesser Than Dimensions of Data'
+    #For now just plot first two components of all clusters as different colors 
+    for cluster in clusters: 
+        idx = (idx+1)%20 
+        #Get elements of data which belong to this cluster; in 
+        #reality should iterate over cluster labels, adding to the plot each time 
+        Xcluster = Xin[cluster == labels,:]
+        #Just plot first two components for now 
+        ax.scatter(Xcluster[:,0],Xcluster[:,1], color = cmap(idx),label = 'Cluster '+str(cluster))
+    ax.legend()
+    fig.show()
+    pass 
 
 def elbow_method(X, k_search, method = 'KMeans', plot = True):
     """
@@ -268,6 +297,11 @@ def elbow_method(X, k_search, method = 'KMeans', plot = True):
     else:
         raise ValueError('method is not a valid method (only "kmeans" or "gm" is available)')
 
+        
+    #To plot a given clustering, we run PCA first and preserve ordering of rows. Then select indices 
+    #for each cluster label in order to plot 
+    
+    
     print("Running Elbow Method...")
     for (i, k) in tqdm(enumerate(k_search), total=len(k_search)):
         if method == 'KMeans':
@@ -277,6 +311,8 @@ def elbow_method(X, k_search, method = 'KMeans', plot = True):
             silh_score[i] = metrics.silhouette_score(X, kmeans_label, metric='euclidean')
             CHindex_score[i] = metrics.calinski_harabasz_score(X, kmeans_label)
             DBindex_score[i] = metrics.davies_bouldin_score(X, kmeans_label)
+            plot_clustering(X,kmeans_label)
+            
         elif method == 'GM':
             gm = GaussianMixture(n_components=int(k), random_state=0).fit(X)
             gm_label = gm.predict(X)
@@ -308,7 +344,14 @@ def elbow_method(X, k_search, method = 'KMeans', plot = True):
         fig.supylabel('Metric Score', fontsize=20, fontname="Times New Roman", fontweight='bold')
         fig.suptitle('Evaluation of {} clustering'.format(method), fontsize = 22, fontname="Times New Roman", fontweight = 'bold')
 
-
+        solve = input('Enter to search For Optimum. Else press any other key and then enter:')
+                     
+        if solve =='':
+            pass
+        else:
+            #this is simply to halt execution of the current function before doing more 
+            return None
+        
         if method == 'KMeans':
         # get the optimal sum of squares elbow value
             elbow_index = get_elbow_index(metric_list[-1])
@@ -327,12 +370,14 @@ def elbow_method(X, k_search, method = 'KMeans', plot = True):
             return
 
         # Compute the Silhouette and Plot
+        
         print('Now computing silhouette over each cluster number from {} to {}'.format(int(center)-4, int(center)+4))
         silh_interval = np.arange(int(center)-4, int(center)+5)
 
         fig, axs = plt.subplots(3, 3, figsize=(15, 10), facecolor='w', edgecolor='k')
         fig.subplots_adjust(hspace=.35, wspace=.2)
         axs = axs.ravel()
+        
         for j in tqdm(range(9)):
             num_cluster = silh_interval[j]
 

@@ -18,14 +18,15 @@ import pandas as pd
 import os
 
 from datatools import make_clean_data, select_features, \
-    remove_quantiles, elbow_method, data_quantization, run_svd
+    remove_quantiles, elbow_method, data_quantization, run_svd,\
+    plot_clustering
 
 """
 Set Parameters for Processing of Data 
 """
 
-def run_elbow(data_set,Kmin = 5,Kmax = 50,num_K = 10):
-    k_search = np.linspace(start=Kmin, stop=Kmax, num= num_K)
+def run_elbow(data_set,Kmin= 5,Kmax =10,num_K = 2):
+    k_search = np.linspace(start=Kmin, stop=Kmax, num= num_K,dtype = int)
     elbow_method(data_set,k_search, method = 'KMeans',plot = True)
     elbow_method(data_set, k_search, method = 'GM', plot = True)
     return None
@@ -37,16 +38,15 @@ if __name__ == "__main__":
     """
 
     dataset = 'basic'  #which dataset; options are 'basic', 'all', or 'freq'
-    
     no_change = False  #Run clustering on cleaned (NaN-removed data). No touching the outliers. 
      
-    #Choose only one of these; run clustering on quantized data, or outlier-removed data 
-    do_quantize = True 
+    #Choose only one of these; run clustering on quantized data, or outlier-removed data.
+    do_quantize = False
     remove_outliers = not do_quantize
     
     #Apply SVD on the data (after quantizing / removing outliers)?
     reduce_dim = False
-
+    
     """
     2. Read In Data
     """
@@ -68,8 +68,9 @@ if __name__ == "__main__":
     X = data_kept.values.astype(np.float64) # numpy array ready to be clustered
 
     """
-    4. Elbow Method on Selected Featureds; Data Otherwise Not Modified 
+    4. Elbow Method on Selected Features; Data Otherwise Not Modified 
     """
+    
     if no_change:
         
         run_elbow(X)
@@ -96,7 +97,9 @@ if __name__ == "__main__":
             X_red = run_svd(X_clean, percent_var = desired_var_per)
             
             run_elbow(X_red)
+            
         else:
+            
             run_elbow(X_clean)
                       
     elif do_quantize:
