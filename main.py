@@ -19,16 +19,16 @@ import os
 
 from datatools import make_clean_data, select_features, \
     remove_quantiles, elbow_method, data_quantization, run_svd,\
-    plot_clustering
-
+        standardize_pd
+    
 """
 Set Parameters for Processing of Data 
 """
 
-def run_elbow(data_set,Kmin= 5,Kmax =10,num_K = 2):
+def run_elbow(data_set, Kmin= 5,Kmax =10,num_K = 2):
     k_search = np.linspace(start=Kmin, stop=Kmax, num= num_K,dtype = int)
     elbow_method(data_set,k_search, method = 'KMeans',plot = True)
-    elbow_method(data_set, k_search, method = 'GM', plot = True)
+    #elbow_method(data_set, k_search, method = 'GM', plot = True)
     return None
     
 if __name__ == "__main__":
@@ -43,15 +43,20 @@ if __name__ == "__main__":
     #Choose only one of these; run clustering on quantized data, or outlier-removed data.
     do_quantize = False
     remove_outliers = not do_quantize
-    
+
     #Apply SVD on the data (after quantizing / removing outliers)?
     reduce_dim = False
+    
+
+    if remove_outliers:
+        rescale = True  #If we remove outliers, default behavior is to rescale the data to [0,1] after cleaning
+    else: 
+        rescale = False
     
     """
     2. Read In Data
     """
     DATA_PATH = './raw_data/CreditCard_data.csv'
-
     if os.path.isfile(DATA_PATH):
         print('DATA_PATH is a valid path')
     else:
@@ -61,7 +66,7 @@ if __name__ == "__main__":
     data_raw = pd.read_csv(DATA_PATH)
     
     """
-    3. Remove bad data values (NaN) and reduce only to valid dataset
+    3. Remove bad data values (NaN) ato obtain valid data. Slice features chosen to obtain desired, valid data. 
     """
     data_valid, _, _ = make_clean_data(data_raw, verbose=False)
     data_kept, _, _ = select_features(data_valid, which= dataset)
@@ -87,8 +92,16 @@ if __name__ == "__main__":
         p = 1 # percent of upper and lower population to be removed
         data_clean, _ = remove_quantiles(data_kept, p)
         assert np.size(data_clean.isna().sum(axis=1).to_numpy().nonzero()[0]) == 0,  "Data still contains NaN"
-        X_clean = data_clean.values.astype(np.float64)
         
+        #If we are rescaling, do the rescaling
+        if rescale:
+            data_clean = standardize_pd(data_clean)
+        else:
+            pass
+        
+        X_clean = data_clean.values.astype(np.float64)
+    
+        #X_clean = X_clean - data_clean.min())/(data_clean.max()-data_clean.min())
         if reduce_dim == True: 
             
             #Run SVD and reduce to components which explain at least 99% variance 
