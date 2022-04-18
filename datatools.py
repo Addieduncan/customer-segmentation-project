@@ -243,33 +243,42 @@ def get_elbow_index(scores):
     
     return idxOfBestPoint
 
-def plot_clustering(Xin, labels, num_comps = 0, savedir= None):
+def plot_clustering(Xin, labels, num_comps = 4, method = 'Kmeans', savepath= None):
     """
     :Xin: <np.ndarray, shape (n,d)> - pca transformed data 
     same rows in order of data matrix 
     :labels: (np.ndarray)- labels from clustering algorithm for each row (data point)
     """
-    print('Here We Run Plot Clustering')
-    #Get ordered list of possible cluster labels 
-    print('here are the cluster labels',labels)
-    clusters = list(set(labels.tolist()))
-    clusters.sort()
-    print('Here is the restructured list',clusters)
-    fig,ax = plt.subplots(1)
-    cmap  = plt.get_cmap('tab20')
-    idx = int(0) 
     
+    assert num_comps >= 2, 'Number of Components to Plot Must be at Least 2'
     assert (num_comps <= Xin.shape[-1]), 'Number of Components to \
         Plot must Be Lesser Than Dimensions of Data'
-    #For now just plot first two components of all clusters as different colors 
+        
+    clusters = list(set(labels.tolist()))
+    clusters.sort()
+    
+    fig,axs = plt.subplots(1,num_comps-1)
+    fig.set_size_inches(17.0, 8.0, forward=True) #Custom with used to see component value 
+    fig.suptitle('PCA View of {} Optimal Clustering'.format(method), \
+                 fontsize = 22, fontname="Times New Roman", fontweight = 'bold')
+    cmap  = plt.get_cmap('tab20')
+    idx = int(0)
+
+    #Find way to wrap this in new iterable 
     for cluster in clusters: 
         idx = (idx+1)%20 
-        #Get elements of data which belong to this cluster; in 
-        #reality should iterate over cluster labels, adding to the plot each time 
         Xcluster = Xin[cluster == labels,:]
-        #Just plot first two components for now 
-        ax.scatter(Xcluster[:,0],Xcluster[:,1], color = cmap(idx),label = 'Cluster '+str(cluster))
-    ax.legend()
+        for comp in range(num_comps-1):
+            ax = axs[comp]
+            axs[comp].scatter(Xcluster[:,comp],Xcluster[:,comp+1],\
+                              color = cmap(idx),label = 'Cluster '+str(cluster))
+            ax.set_xlabel('Component '+str(comp))
+            ax.set_ylabel('Component '+str(comp+1))
+            
+    #there is a way to attach the legend to figsave - find this when needed to plot 
+    
+    #for ax in axs:
+        #ax.legend()
     fig.show()
     pass 
 
@@ -300,7 +309,6 @@ def elbow_method(X, k_search, method = 'KMeans', plot = True):
         
     #To plot a given clustering, we run PCA first and preserve ordering of rows. Then select indices 
     #for each cluster label in order to plot 
-    
     
     print("Running Elbow Method...")
     for (i, k) in tqdm(enumerate(k_search), total=len(k_search)):
@@ -343,14 +351,6 @@ def elbow_method(X, k_search, method = 'KMeans', plot = True):
         fig.supxlabel(r'Number of clusters $k$', fontsize=20, fontname="Times New Roman", fontweight='bold')
         fig.supylabel('Metric Score', fontsize=20, fontname="Times New Roman", fontweight='bold')
         fig.suptitle('Evaluation of {} clustering'.format(method), fontsize = 22, fontname="Times New Roman", fontweight = 'bold')
-
-        solve = input('Enter to search For Optimum. Else press any other key and then enter:')
-                     
-        if solve =='':
-            pass
-        else:
-            #this is simply to halt execution of the current function before doing more 
-            return None
         
         if method == 'KMeans':
         # get the optimal sum of squares elbow value
@@ -366,6 +366,7 @@ def elbow_method(X, k_search, method = 'KMeans', plot = True):
             print('The elbow (num of clusters) of SoS given by Method 1 is {}, by Method 2 is {}\n'.format(optimal_K_1, optimal_K_2), flush='True')
         plt.show()
         center =input('Now input the center of the fine-search interval (+-4) of the silhouette scores, (press Enter to pass) \n')
+        
         if center == '':
             return
 
