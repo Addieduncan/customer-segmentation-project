@@ -430,6 +430,8 @@ def elbow_method(X, k_search, method='KMeans', plot=True, savedir = './presimage
             15, 10), facecolor='w', edgecolor='k')
         fig.subplots_adjust(hspace=.35, wspace=.2)
         axs = axs.ravel()
+        CHindex_score2 = np.zeros(9)
+        DBindex_score2 = CHindex_score.copy()
 
         for j in tqdm(range(9)):
             num_cluster = silh_interval[j]
@@ -448,6 +450,8 @@ def elbow_method(X, k_search, method='KMeans', plot=True, savedir = './presimage
                 X, cluster_label, metric='euclidean')
             # print('Num of Cluster is {}. Average Silhouette is {:.2f} \n'.format(num_cluster, silh_avg_score))
             sample_silhouette_values = silhouette_samples(X, cluster_label)
+            CHindex_score2[j] = metrics.calinski_harabasz_score(X, cluster_label)
+            DBindex_score2[j] = metrics.davies_bouldin_score(X, cluster_label)
 
             y_lower = 5
             for i in range(num_cluster):
@@ -499,6 +503,8 @@ def elbow_method(X, k_search, method='KMeans', plot=True, savedir = './presimage
     
     optimal_num = input('Input an integer value for optimal clusters based on inspection: ')
     optimal_num = int(optimal_num.strip())
+    optimal_indx = int(np.where(silh_interval==optimal_num)[0])
+    print("For this number of cluster, the CH score is {}, the DB score is {}".format(CHindex_score2[optimal_indx], DBindex_score2[optimal_indx]))
     
     print('Optimal input was',optimal_num)
     makePCA = PCA(n_components=X.shape[-1]-1)
