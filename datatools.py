@@ -316,7 +316,7 @@ def plot_optimal(Xin, labels, num_comps=4, method='Kmeans', savepath=None):
     # there is a way to attach the legend to figsave - find this when needed to plot
     # for ax in axs:
         # ax.legend()
-    fig.show()
+    plt.show()
     
     pass
 
