@@ -86,12 +86,12 @@ if __name__ == "__main__":
         optimal_num = run_elbow(X,METHOD)
 
         if METHOD == 'KMeans':
-            cluster = KMeans(n_clusters=int(optimal_num), random_state=0).fit(X_clean)
+            cluster = KMeans(n_clusters=int(optimal_num), random_state=0).fit(X)
             cluster_labels = cluster.labels_
         elif METHOD == 'GM':
-            cluster = GaussianMixture(n_clusters=int(optimal_num), random_state=0).fit(X_clean)
+            cluster = GaussianMixture(n_clusters=int(optimal_num), random_state=0).fit(X)
             cluster_labels = cluster.labels_
-        plot_individual_feature(X_clean, cluster_labels, int(optimal_num), feature_kept)
+        plot_individual_feature(X, cluster_labels, int(optimal_num), feature_kept)
 
         """
         5.
