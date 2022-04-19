@@ -491,8 +491,7 @@ def elbow_method(X, k_search, method='KMeans', plot=True, savedir = './presimage
         fig.suptitle('Silhouette Score for each sample', fontsize=22,
                      fontname="Times New Roman", fontweight='bold')
         plt.show()
-        
-        
+
     """
     ---------------- New ---------------
     Need for method to identify optimal clusterings 
@@ -536,27 +535,30 @@ def elbow_method(X, k_search, method='KMeans', plot=True, savedir = './presimage
 
     return optimal_num
 
-def plot_individual_feature(X, labels, num_cluster, feature_list):
+
+def plot_individual_feature(X, labels, num_cluster, feature_list, feature_plot):
 
     for i in range(num_cluster):
         ith_cluster_member = X[labels == i]
-        nrows = np.ceil(np.sqrt(X.shape[1]))
-        ncols = np.ceil(X.shape[1]/nrows)
+        nrows = np.ceil(np.sqrt(len(feature_plot)))
+        ncols = np.ceil(len(feature_plot)/nrows)
         fig, axs = plt.subplots(int(nrows), int(ncols), figsize=(
             15, 10), facecolor='w', edgecolor='k')
-        fig.subplots_adjust(hspace=.35, wspace=.2)
+        fig.subplots_adjust(hspace=.4, wspace=.3) # suitable for 9 plots, need to adjust for other number of plots
         axs = axs.ravel()
-        for j in range(X.shape[1]):
-            axs[j].hist(ith_cluster_member[:,j], bins=10)
-            axs[j].set_title('Feature {}'.format(feature_list[j]), fontsize=16,
+        for j in range(len(feature_plot)):
+            feature_index = feature_list.index(feature_plot[j])
+            axs[j].hist(ith_cluster_member[:,feature_index], bins=10)
+            axs[j].set_title('Feature {}'.format(feature_plot[j]), fontsize=14,
                       fontname="Times New Roman", fontweight='bold')
             axs[j].set_xlabel('Magnitude of the feature', fontsize=12,
                       fontname="Times New Roman", fontweight='bold')
             axs[j].set_ylabel('Number of Population', fontsize=12,
                       fontname="Times New Roman", fontweight='bold')
-        fig.savefig('images/Individual_Feature/{}Features_{}thCluster.png'.format(X.shape[1],i))
+        fig.suptitle('{}th Cluster'.format((i)), fontsize=18,
+                      fontname="Times New Roman", fontweight='bold')
+        fig.savefig('images/Individual_Feature/SelectedFeature{}thCluster.png'.format(i))
         # plt.show()
-
 
 
 if __name__ == "__main__":

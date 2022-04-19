@@ -41,13 +41,13 @@ if __name__ == "__main__":
     1. Set parameters for this file run
     """
 
-    METHOD = 'KMeans' #options are 'GM' or 'KMeans'
+    METHOD = 'GM' #options are 'GM' or 'KMeans'
 
-    dataset = 'basic'  #which dataset; options are 'basic', 'all', or 'freq'
+    dataset = 'all'  #which dataset; options are 'basic', 'all', or 'freq'
     no_change = False  #Run clustering on cleaned (NaN-removed data). No touching the outliers. 
      
     #Choose only one of these; run clustering on quantized data, or outlier-removed data.
-    do_quantize = False
+    do_quantize = True
     remove_outliers = not do_quantize
 
     #Apply SVD on the data (after quantizing / removing outliers)?
@@ -57,7 +57,11 @@ if __name__ == "__main__":
         rescale = True  #If we remove outliers, default behavior is to rescale the data to [0,1] after cleaning
     else: 
         rescale = False
-    
+
+    if_elbow = input('Do you want to run elbow method (y/n): ') # add the option to skip elbow method
+
+    feature_plot = ['CREDIT_LIMIT', 'BALANCE', 'PURCHASES_FREQUENCY', 'PRC_FULL_PAYMENT', 'CASH_ADVANCE_FREQUENCY',\
+                    'MINIMUM_PAYMENTS', 'CASH_ADVANCE', 'PURCHASES',  'PURCHASES_INSTALLMENTS_FREQUENCY']
     """
     2. Read In Data
     """
@@ -82,17 +86,20 @@ if __name__ == "__main__":
     """
     
     if no_change:
-        
-        optimal_num = run_elbow(X,METHOD)
+        if if_elbow == 'y':
+            optimal_num = run_elbow(X,METHOD)
+        elif if_elbow == 'n':
+            optimal_num = input('Input the cluster number to perform clustering')
 
-        if METHOD == 'KMeans':
-            cluster = KMeans(n_clusters=int(optimal_num), random_state=0).fit(X)
-            cluster_labels = cluster.labels_
-        elif METHOD == 'GM':
-            cluster = GaussianMixture(n_components=int(optimal_num), random_state=0).fit(X)
-            cluster_labels = cluster.labels_
-        plot_individual_feature(X, cluster_labels, int(optimal_num), feature_kept)
-
+            if METHOD == 'KMeans':
+                cluster = KMeans(n_clusters=int(optimal_num), random_state=0).fit(X)
+                cluster_labels = cluster.labels_
+            elif METHOD == 'GM':
+                cluster = GaussianMixture(n_components=int(optimal_num), random_state=0).fit(X)
+                cluster_labels = cluster.predict(X)
+            plot_individual_feature(X, cluster_labels, int(optimal_num), feature_kept, feature_plot)
+        else:
+            raise ValueError('Invalid Response for "if_elbow", only (y/n) allowed')
         """
         5.
             (i)   Remove Outliers or to Quantize All Data; 
@@ -121,20 +128,38 @@ if __name__ == "__main__":
             
             desired_var_per = 99
             X_red = run_svd(X_clean, percent_var = desired_var_per)
+            if if_elbow == 'y':
+                optimal_num = run_elbow(X_red, METHOD)
+            elif if_elbow == 'n':
+                optimal_num = input('Input the cluster number to perform clustering: ')
+            else:
+                raise ValueError('Invalid Response for "if_elbow", only (y/n) allowed')
 
-            optimal_num = run_elbow(X_red, METHOD)
+            if METHOD == 'KMeans':
+                cluster = KMeans(n_clusters=int(optimal_num), random_state=0).fit(X_red)
+                cluster_labels = cluster.labels_
+            elif METHOD == 'GM':
+                cluster = GaussianMixture(n_components=int(optimal_num), random_state=0).fit(X_red)
+                cluster_labels = cluster.predict(X_red)
+            plot_individual_feature(X_clean, cluster_labels, int(optimal_num), feature_kept, feature_plot)
             
         else:
+            if if_elbow == 'y':
+                optimal_num = run_elbow(X_clean, METHOD)
+            elif if_elbow == 'n':
+                optimal_num = input('Input the cluster number to perform clustering: ')
+            else:
+                raise ValueError('Invalid Response for "if_elbow", only (y/n) allowed')
 
-            optimal_num = run_elbow(X_clean, METHOD)
 
-        if METHOD == 'KMeans':
-            cluster = KMeans(n_clusters=int(optimal_num), random_state=0).fit(X_clean)
-            cluster_labels = cluster.labels_
-        elif METHOD == 'GM':
-            cluster = GaussianMixture(n_components=int(optimal_num), random_state=0).fit(X_clean)
-            cluster_labels = cluster.labels_
-        plot_individual_feature(X_clean, cluster_labels, int(optimal_num), feature_kept)
+            if METHOD == 'KMeans':
+                cluster = KMeans(n_clusters=int(optimal_num), random_state=0).fit(X_clean)
+                cluster_labels = cluster.labels_
+            elif METHOD == 'GM':
+                cluster = GaussianMixture(n_components=int(optimal_num), random_state=0).fit(X_clean)
+                cluster_labels = cluster.predict(X_clean)
+            plot_individual_feature(X_clean, cluster_labels, int(optimal_num), feature_kept, feature_plot)
+
     elif do_quantize:
         """
         Quantize Data- Convert each feature into integer based on membership in the population quantile 
@@ -150,12 +175,19 @@ if __name__ == "__main__":
             optimal_num = run_elbow(X_red, METHOD)
         
         elif reduce_dim == False:
-            optimal_num = run_elbow(X_clean, METHOD)
 
-        if METHOD == 'KMeans':
-            cluster = KMeans(n_clusters=int(optimal_num), random_state=0).fit(X_clean)
-            cluster_labels = cluster.labels_
-        elif METHOD == 'GM':
-            cluster = GaussianMixture(n_components=int(optimal_num), random_state=0).fit(X_clean)
-            cluster_labels = cluster.labels_
-        plot_individual_feature(X_clean, cluster_labels, int(optimal_num), feature_kept)
+            if if_elbow == 'y':
+                optimal_num = run_elbow(X_clean, METHOD)
+            elif if_elbow == 'n':
+                optimal_num = input('Input the cluster number to perform clustering: ')
+            else:
+                raise ValueError('Invalid Response for "if_elbow", only (y/n) allowed')
+
+            if METHOD == 'KMeans':
+                cluster = KMeans(n_clusters=int(optimal_num), random_state=0).fit(X_clean)
+                cluster_labels = cluster.labels_
+            elif METHOD == 'GM':
+                cluster = GaussianMixture(n_components=int(optimal_num), random_state=0).fit(X_clean)
+                cluster_labels = cluster.predict(X_clean)
+
+            plot_individual_feature(X_clean, cluster_labels, int(optimal_num), feature_kept, feature_plot)
