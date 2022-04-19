@@ -7,8 +7,10 @@ data_kept - an array containing the data stored from the valid data, but reduced
             desire to keep 
             
 X_reduced-  after dimension reduction
-X_clean - after quantile outlier reduction 
-X_quant - after quantization (distinct from quantile elimination)
+X_clean - after quantile outlier reduction  or
+    after quantization (distinct from quantile elimination)
+
+
 
 """
 
@@ -27,20 +29,20 @@ from datatools import make_clean_data, select_features, \
 Set Parameters for Processing of Data 
 """
 
-
-def run_elbow(data_set, method, Kmin=5, Kmax=50, num_K=10):
-    k_search = np.linspace(start=Kmin, stop=Kmax, num=num_K, dtype=int)
-    optimal_num = elbow_method(data_set, k_search, method=method, plot=True)
-
+def run_elbow(data_set, method, Kmin= 5,Kmax = 50 ,num_K = 10):
+    k_search = np.linspace(start=Kmin, stop=Kmax, num= num_K,dtype = int)
+    optimal_num = elbow_method(data_set,k_search, method = method,plot = True)
+    
     return optimal_num
 
 
+    
 if __name__ == "__main__":
     
     """
     1. Set parameters for this file run
     """
-
+    
     METHOD = 'KMeans' #options are 'GM' or 'KMeans'
 
     dataset = 'basic'  #which dataset; options are 'basic', 'all', or 'freq'
@@ -76,22 +78,15 @@ if __name__ == "__main__":
     data_valid, _, _ = make_clean_data(data_raw, verbose=False)
     data_kept, feature_kept, _ = select_features(data_valid, which= dataset)
     X = data_kept.values.astype(np.float64) # numpy array ready to be clustered
-
+    print(feature_kept)
+    print(type(feature_kept))
     """
     4. Elbow Method on Selected Features; Data Otherwise Not Modified 
     """
     
     if no_change:
         
-        optimal_num = run_elbow(X,METHOD)
-
-        if METHOD == 'KMeans':
-            cluster = KMeans(n_clusters=int(optimal_num), random_state=0).fit(X_clean)
-            cluster_labels = cluster.labels_
-        elif METHOD == 'GM':
-            cluster = GaussianMixture(n_clusters=int(optimal_num), random_state=0).fit(X_clean)
-            cluster_labels = cluster.labels_
-        plot_individual_feature(X_clean, cluster_labels, int(optimal_num), feature_kept)
+        run_elbow(X,METHOD)
 
         """
         5.
@@ -121,11 +116,11 @@ if __name__ == "__main__":
             
             desired_var_per = 99
             X_red = run_svd(X_clean, percent_var = desired_var_per)
-
+            
             optimal_num = run_elbow(X_red, METHOD)
             
         else:
-
+            
             optimal_num = run_elbow(X_clean, METHOD)
 
         if METHOD == 'KMeans':
@@ -135,6 +130,7 @@ if __name__ == "__main__":
             cluster = GaussianMixture(n_clusters=int(optimal_num), random_state=0).fit(X_clean)
             cluster_labels = cluster.labels_
         plot_individual_feature(X_clean, cluster_labels, int(optimal_num), feature_kept)
+
     elif do_quantize:
         """
         Quantize Data- Convert each feature into integer based on membership in the population quantile 

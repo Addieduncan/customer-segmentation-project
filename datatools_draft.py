@@ -310,14 +310,13 @@ def plot_optimal(Xin, labels, num_comps=4, method='Kmeans', savepath=None):
             ax = axs[comp]
             axs[comp].scatter(Xcluster[:, comp], Xcluster[:, comp+1],
                               color=cmap(idx), label='Cluster '+str(cluster))
-            ax.set_xlabel('Component '+str(comp+2))
+            ax.set_xlabel('Component '+str(comp))
             ax.set_ylabel('Component '+str(comp+1))
 
     # there is a way to attach the legend to figsave - find this when needed to plot
     # for ax in axs:
         # ax.legend()
     fig.show()
-    
     pass
 
 def elbow_method(X, k_search, method='KMeans', plot=True, savedir = './presimages'):
@@ -489,6 +488,9 @@ def elbow_method(X, k_search, method='KMeans', plot=True, savedir = './presimage
         plt.show()
         
         
+    optimal_num = input('Input an integer value for optimal clusters based on inspection: \n')
+    optimal_num = int(optimal_num)
+    
     """
     ---------------- New ---------------
     Need for method to identify optimal clusterings 
@@ -496,11 +498,6 @@ def elbow_method(X, k_search, method='KMeans', plot=True, savedir = './presimage
     plot optimal clustering after decomposition of the data 
     ------------------------------------------------------
     """
-    
-    optimal_num = input('Input an integer value for optimal clusters based on inspection: ')
-    optimal_num = int(optimal_num.strip())
-    
-    print('Optimal input was',optimal_num)
     makePCA = PCA(n_components=X.shape[-1]-1)
     makePCA.fit(X)
     Xpca = makePCA.transform(X)
@@ -513,13 +510,12 @@ def elbow_method(X, k_search, method='KMeans', plot=True, savedir = './presimage
         optimal_label_gmm = GMMOpt.predict(X)
         plot_optimal(Xin = Xpca, labels= optimal_label_gmm, num_comps= 5,\
                      savepath = savedir+'/optimal_gmm.eps')
-    elif method == 'KMeans':
+    elif method == 'Kmeans':
         KmeansOpt = KMeans(n_clusters=optimal_num, random_state=0).fit(X)
         optimal_label_kmeans = KmeansOpt.labels_
         plot_optimal(Xin = Xpca, labels= optimal_label_kmeans, num_comps= 5,\
                      savepath = savedir+'/optimal_kmeans.eps')
-            
-    # previous way of showing figures
+    # previous way of showing figure
         # for i in range(m):
         #     plt.plot(k_search, metric_list[i], marker = Markers[i])
         # plt.xlabel(r'Number of clusters $k$', fontsize=20, fontname="Times New Roman", fontweight='bold')
@@ -534,24 +530,16 @@ def plot_individual_feature(X, labels, num_cluster, feature_list):
 
     for i in range(num_cluster):
         ith_cluster_member = X[labels == i]
-        nrows = np.ceil(np.sqrt(X.shape[1]))
-        ncols = np.ceil(X.shape[1]/nrows)
-        fig, axs = plt.subplots(int(nrows), int(ncols), figsize=(
+        fig, axs = plt.subplots(3, 3, figsize=(
             15, 10), facecolor='w', edgecolor='k')
         fig.subplots_adjust(hspace=.35, wspace=.2)
         axs = axs.ravel()
         for j in range(X.shape[1]):
             axs[j].hist(ith_cluster_member[:,j], bins=10)
-            axs[j].set_title('feature {}'.format(feature_list[j]), fontsize=16,
-                      fontname="Times New Roman", fontweight='bold')
-            axs[j].set_xlabel('Magnitude of the feature', fontsize=12,
-                      fontname="Times New Roman", fontweight='bold')
-            axs[j].set_ylabel('Number of Population', fontsize=12,
-                      fontname="Times New Roman", fontweight='bold')
-        fig.savefig('images/Individual_Feature/{}Features_{}thCluster.png'.format(X.shape[1],i))
+            axs[j].set_title('Histogram of the feature {}'.format(feature_list[j]))
+            axs[j].set_xlabel('Magnitude of the feature')
+            axs[j].set_ylabel('Number of Population')
         plt.show()
-
-
 
 if __name__ == "__main__":
 
