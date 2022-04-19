@@ -25,10 +25,10 @@ from datatools import make_clean_data, select_features, \
 Set Parameters for Processing of Data 
 """
 
-def run_elbow(data_set, Kmin= 5,Kmax =10,num_K = 2):
+def run_elbow(data_set, method, Kmin= 5,Kmax = 50 ,num_K = 10):
     k_search = np.linspace(start=Kmin, stop=Kmax, num= num_K,dtype = int)
-    elbow_method(data_set,k_search, method = 'KMeans',plot = True)
-    #elbow_method(data_set, k_search, method = 'GM', plot = True)
+    elbow_method(data_set,k_search, method = method,plot = True)
+    
     return None
     
 if __name__ == "__main__":
@@ -36,6 +36,8 @@ if __name__ == "__main__":
     """
     1. Set parameters for this file run
     """
+    
+    METHOD = 'GM' #options are 'GM' or 'Kmeans'
 
     dataset = 'basic'  #which dataset; options are 'basic', 'all', or 'freq'
     no_change = False  #Run clustering on cleaned (NaN-removed data). No touching the outliers. 
@@ -47,7 +49,6 @@ if __name__ == "__main__":
     #Apply SVD on the data (after quantizing / removing outliers)?
     reduce_dim = False
     
-
     if remove_outliers:
         rescale = True  #If we remove outliers, default behavior is to rescale the data to [0,1] after cleaning
     else: 
@@ -78,7 +79,7 @@ if __name__ == "__main__":
     
     if no_change:
         
-        run_elbow(X)
+        run_elbow(X,METHOD)
 
         """
         5.
@@ -109,11 +110,11 @@ if __name__ == "__main__":
             desired_var_per = 99
             X_red = run_svd(X_clean, percent_var = desired_var_per)
             
-            run_elbow(X_red)
+            run_elbow(X_red, METHOD)
             
         else:
             
-            run_elbow(X_clean)
+            run_elbow(X_clean, METHOD)
                       
     elif do_quantize:
         """
@@ -127,7 +128,7 @@ if __name__ == "__main__":
         if reduce_dim == True:
             desired_var_per = 99
             X_red = run_svd(X_quant,percent_var = desired_var_per)
-            run_elbow(X_red)
+            run_elbow(X_red, METHOD)
         
         elif reduce_dim == False:
-            run_elbow(X_quant)
+            run_elbow(X_quant, METHOD)

@@ -319,7 +319,7 @@ def plot_optimal(Xin, labels, num_comps=4, method='Kmeans', savepath=None):
     fig.show()
     pass
 
-def elbow_method(X, k_search, method='KMeans', plot=True, savedir = '././presimages'):
+def elbow_method(X, k_search, method='KMeans', plot=True, savedir = './presimages'):
     """
     Elbow Method for different clustering methods with metrics CHindex, DBindex shown;
     Additionally show SoS for kMeans clustering. And finally plot the silhouette scores
@@ -412,28 +412,6 @@ def elbow_method(X, k_search, method='KMeans', plot=True, savedir = '././presima
         fig.show()
         # formerly was plt.show()  - is an issue here?
 
-        """
-        ---------------- New ---------------
-        Need for method to identify optimal clusterings 
-        
-        plot optimal clustering after decomposition of the data 
-        ------------------------------------------------------
-        """
-        makePCA = PCA(n_components=X.shape[-1]-1)
-        makePCA.fit(X)
-        Xpca = makePCA.transform(X)
-        # Re-run kmeans for optimal number
-
-        #assert (type(optimal_K_1) == int), 'First Optimal KMeans Cluster Value is Not Integer'
-        #assert (type(optimal_K_2) == int), 'Second Optimal KMeans Cluster Value is Not Integer'
-        
-        optimal_kvals = [optimal_K_1]
-        for kval in optimal_kvals:
-            # Reproduce the clustering that we used
-            print('Before calling Kmeans optimal run here is X',X)
-            KmeansOpt = KMeans(n_clusters=kval, random_state=0).fit(X)
-            optimal_label = KmeansOpt.labels_
-            plot_optimal(Xin = Xpca, labels= optimal_label, num_comps= Xpca.shape[-1],savepath = savedir+'/optimal.eps')
 
         center = input(
             'Now input the center of the fine-search interval (+-4) of the silhouette scores, (press Enter to pass) \n')
@@ -508,7 +486,35 @@ def elbow_method(X, k_search, method='KMeans', plot=True, savedir = '././presima
         fig.suptitle('Silhouette Score for each sample', fontsize=22,
                      fontname="Times New Roman", fontweight='bold')
         plt.show()
+        
+        
+    optimal_num = input('Input an integer value for optimal clusters based on inspection: \n')
+    optimal_num = int(optimal_cluster)
+    
+    """
+    ---------------- New ---------------
+    Need for method to identify optimal clusterings 
+    
+    plot optimal clustering after decomposition of the data 
+    ------------------------------------------------------
+    """
+    makePCA = PCA(n_components=X.shape[-1]-1)
+    makePCA.fit(X)
+    Xpca = makePCA.transform(X)
+    # Re-run kmeans for optimal number
 
+    #assert (type(optimal_K_1) == int), 'First Optimal KMeans Cluster Value is Not Integer'
+    #assert (type(optimal_K_2) == int), 'Second Optimal KMeans Cluster Value is Not Integer'
+    if method == 'GM':
+        GMMOpt = GaussianMixture(n_components = optimal_num, random_state=0).fit(X)
+        optimal_label_gmm = GMMOpt.predict(X)
+        plot_optimal(Xin = Xpca, labels= optimal_label_gmm, num_comps= 5,\
+                     savepath = savedir+'/optimal_gmm.eps')
+    elif method == 'Kmeans':
+        KmeansOpt = KMeans(n_clusters=optimal_num, random_state=0).fit(X)
+        optimal_label_kmeans = KmeansOpt.labels_
+        plot_optimal(Xin = Xpca, labels= optimal_label_kmeans, num_comps= 5,\
+                     savepath = savedir+'/optimal_kmeans.eps')
     # previous way of showing figures
         # for i in range(m):
         #     plt.plot(k_search, metric_list[i], marker = Markers[i])
