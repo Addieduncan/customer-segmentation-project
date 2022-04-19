@@ -542,14 +542,14 @@ def plot_individual_feature(X, labels, num_cluster, feature_list):
         axs = axs.ravel()
         for j in range(X.shape[1]):
             axs[j].hist(ith_cluster_member[:,j], bins=10)
-            axs[j].set_title('feature {}'.format(feature_list[j]), fontsize=16,
+            axs[j].set_title('Feature {}'.format(feature_list[j]), fontsize=16,
                       fontname="Times New Roman", fontweight='bold')
             axs[j].set_xlabel('Magnitude of the feature', fontsize=12,
                       fontname="Times New Roman", fontweight='bold')
             axs[j].set_ylabel('Number of Population', fontsize=12,
                       fontname="Times New Roman", fontweight='bold')
         fig.savefig('images/Individual_Feature/{}Features_{}thCluster.png'.format(X.shape[1],i))
-        plt.show()
+        # plt.show()
 
 
 
