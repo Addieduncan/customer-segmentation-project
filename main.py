@@ -28,9 +28,9 @@ Set Parameters for Processing of Data
 """
 
 
-def run_elbow(data_set, method, Kmin=5, Kmax=50, num_K=10):
+def run_elbow(data_set, method, Kmin=5, Kmax=50, num_K=10, do_transpose = False, feature_select = None):
     k_search = np.linspace(start=Kmin, stop=Kmax, num=num_K, dtype=int)
-    optimal_num = elbow_method(data_set, k_search, method=method, plot=True)
+    optimal_num = elbow_method(data_set, k_search, method=method, plot=True, do_transpose=do_transpose, feature_select= feature_select)
 
     return optimal_num
 
@@ -41,7 +41,7 @@ if __name__ == "__main__":
     1. Set parameters for this file run
     """
 
-    METHOD = 'GM' #options are 'GM' or 'KMeans'
+    METHOD = 'KMeans' #options are 'GM' or 'KMeans'
 
     dataset = 'all'  #which dataset; options are 'basic', 'all', or 'freq'
     no_change = False  #Run clustering on cleaned (NaN-removed data). No touching the outliers. 
@@ -58,10 +58,15 @@ if __name__ == "__main__":
     else: 
         rescale = False
 
-    if_elbow = input('Do you want to run elbow method (y/n): ') # add the option to skip elbow method
 
+    do_elbow = input('Do you want to run elbow method (y/n): ') # add the option to skip elbow method
+
+    # the list of features to plot for non-transpose problem
     feature_plot = ['CREDIT_LIMIT', 'BALANCE', 'PURCHASES_FREQUENCY', 'PRC_FULL_PAYMENT', 'CASH_ADVANCE_FREQUENCY',\
                     'MINIMUM_PAYMENTS', 'CASH_ADVANCE', 'PURCHASES',  'PURCHASES_INSTALLMENTS_FREQUENCY']
+
+    do_transpose = True
+
     """
     2. Read In Data
     """
@@ -84,11 +89,19 @@ if __name__ == "__main__":
     """
     4. Elbow Method on Selected Features; Data Otherwise Not Modified 
     """
-    
+    if do_transpose:
+
+        X = X.transpose()
+        print("\nThis is the transpose problem of shape: {}x{}\n".format(X.shape[0], X.shape[1]))
+
+
     if no_change:
-        if if_elbow == 'y':
-            optimal_num = run_elbow(X,METHOD)
-        elif if_elbow == 'n':
+        if do_elbow == 'y':
+            if do_transpose:
+                optimal_num = run_elbow(X, METHOD, Kmin=2, Kmax=13, num_K=12, do_transpose = do_transpose, feature_select = feature_kept)
+            else:
+                optimal_num = run_elbow(X,METHOD)
+        elif do_elbow == 'n':
             optimal_num = input('Input the cluster number to perform clustering')
 
             if METHOD == 'KMeans':
@@ -99,7 +112,7 @@ if __name__ == "__main__":
                 cluster_labels = cluster.predict(X)
             plot_individual_feature(X, cluster_labels, int(optimal_num), feature_kept, feature_plot)
         else:
-            raise ValueError('Invalid Response for "if_elbow", only (y/n) allowed')
+            raise ValueError('Invalid Response for "do_elbow", only (y/n) allowed')
         """
         5.
             (i)   Remove Outliers or to Quantize All Data; 
@@ -120,6 +133,10 @@ if __name__ == "__main__":
             pass
         
         X_clean = data_clean.values.astype(np.float64)
+
+        if do_transpose:
+            X_clean = X_clean.transpose()
+
     
         #X_clean = X_clean - data_clean.min())/(data_clean.max()-data_clean.min())
         if reduce_dim == True: 
@@ -128,37 +145,48 @@ if __name__ == "__main__":
             
             desired_var_per = 99
             X_red = run_svd(X_clean, percent_var = desired_var_per)
-            if if_elbow == 'y':
-                optimal_num = run_elbow(X_red, METHOD)
-            elif if_elbow == 'n':
+
+            if do_elbow == 'y':
+                if do_transpose:
+                    optimal_num = run_elbow(X_red, METHOD, Kmin=2, Kmax=13, num_K=12, do_transpose=do_transpose,
+                                            feature_select=feature_kept)
+                else:
+                    optimal_num = run_elbow(X_red, METHOD)
+
+            elif do_elbow == 'n':
                 optimal_num = input('Input the cluster number to perform clustering: ')
             else:
-                raise ValueError('Invalid Response for "if_elbow", only (y/n) allowed')
+                raise ValueError('Invalid Response for "do_elbow", only (y/n) allowed')
 
-            if METHOD == 'KMeans':
-                cluster = KMeans(n_clusters=int(optimal_num), random_state=0).fit(X_red)
-                cluster_labels = cluster.labels_
-            elif METHOD == 'GM':
-                cluster = GaussianMixture(n_components=int(optimal_num), random_state=0).fit(X_red)
-                cluster_labels = cluster.predict(X_red)
-            plot_individual_feature(X_clean, cluster_labels, int(optimal_num), feature_kept, feature_plot)
+            if not do_transpose:
+                if METHOD == 'KMeans':
+                    cluster = KMeans(n_clusters=int(optimal_num), random_state=0).fit(X_red)
+                    cluster_labels = cluster.labels_
+                elif METHOD == 'GM':
+                    cluster = GaussianMixture(n_components=int(optimal_num), random_state=0).fit(X_red)
+                    cluster_labels = cluster.predict(X_red)
+                plot_individual_feature(X_red, cluster_labels, int(optimal_num), feature_kept, feature_plot)
             
         else:
-            if if_elbow == 'y':
-                optimal_num = run_elbow(X_clean, METHOD)
-            elif if_elbow == 'n':
+            if do_elbow == 'y':
+                if do_transpose:
+                    optimal_num = run_elbow(X_clean, METHOD, Kmin=2, Kmax=13, num_K=12, do_transpose=do_transpose,
+                                            feature_select=feature_kept)
+                else:
+                    optimal_num = run_elbow(X_clean, METHOD)
+            elif do_elbow == 'n':
                 optimal_num = input('Input the cluster number to perform clustering: ')
             else:
-                raise ValueError('Invalid Response for "if_elbow", only (y/n) allowed')
+                raise ValueError('Invalid Response for "do_elbow", only (y/n) allowed')
 
-
-            if METHOD == 'KMeans':
-                cluster = KMeans(n_clusters=int(optimal_num), random_state=0).fit(X_clean)
-                cluster_labels = cluster.labels_
-            elif METHOD == 'GM':
-                cluster = GaussianMixture(n_components=int(optimal_num), random_state=0).fit(X_clean)
-                cluster_labels = cluster.predict(X_clean)
-            plot_individual_feature(X_clean, cluster_labels, int(optimal_num), feature_kept, feature_plot)
+            if not do_transpose:
+                if METHOD == 'KMeans':
+                    cluster = KMeans(n_clusters=int(optimal_num), random_state=0).fit(X_clean)
+                    cluster_labels = cluster.labels_
+                elif METHOD == 'GM':
+                    cluster = GaussianMixture(n_components=int(optimal_num), random_state=0).fit(X_clean)
+                    cluster_labels = cluster.predict(X_clean)
+                plot_individual_feature(X_clean, cluster_labels, int(optimal_num), feature_kept, feature_plot)
 
     elif do_quantize:
         """
@@ -168,26 +196,54 @@ if __name__ == "__main__":
         data_quant, percent_zero = data_quantization(data_kept)
         print('Features have at least the following percentage of being zero:\n', percent_zero)
         X_clean = data_quant.values.astype(np.float64)
+
+        if do_transpose:
+            X_clean = X_clean.transpose()
         
         if reduce_dim == True:
             desired_var_per = 99
             X_red = run_svd(X_clean, percent_var = desired_var_per)
-            optimal_num = run_elbow(X_red, METHOD)
+            if do_elbow == 'y':
+                if do_transpose:
+                    optimal_num = run_elbow(X_red, METHOD, Kmin=2, Kmax=13, num_K=12, do_transpose=do_transpose,
+                                            feature_select=feature_kept)
+                else:
+                    optimal_num = run_elbow(X_red, METHOD)
+
+            elif do_elbow == 'n':
+                optimal_num = input('Input the cluster number to perform clustering: ')
+            else:
+                raise ValueError('Invalid Response for "do_elbow", only (y/n) allowed')
+
+            if not do_transpose:
+                if METHOD == 'KMeans':
+                    cluster = KMeans(n_clusters=int(optimal_num), random_state=0).fit(X_red)
+                    cluster_labels = cluster.labels_
+                elif METHOD == 'GM':
+                    cluster = GaussianMixture(n_components=int(optimal_num), random_state=0).fit(X_red)
+                    cluster_labels = cluster.predict(X_red)
+                plot_individual_feature(X_red, cluster_labels, int(optimal_num), feature_kept, feature_plot)
         
         elif reduce_dim == False:
 
-            if if_elbow == 'y':
-                optimal_num = run_elbow(X_clean, METHOD)
-            elif if_elbow == 'n':
+            if do_elbow == 'y':
+                if do_transpose:
+                    optimal_num = run_elbow(X_clean, METHOD, Kmin=2, Kmax=13, num_K=12, do_transpose=do_transpose,
+                                            feature_select=feature_kept)
+                else:
+                    optimal_num = run_elbow(X_clean, METHOD)
+
+            elif do_elbow == 'n':
                 optimal_num = input('Input the cluster number to perform clustering: ')
             else:
-                raise ValueError('Invalid Response for "if_elbow", only (y/n) allowed')
+                raise ValueError('Invalid Response for "do_elbow", only (y/n) allowed')
 
-            if METHOD == 'KMeans':
-                cluster = KMeans(n_clusters=int(optimal_num), random_state=0).fit(X_clean)
-                cluster_labels = cluster.labels_
-            elif METHOD == 'GM':
-                cluster = GaussianMixture(n_components=int(optimal_num), random_state=0).fit(X_clean)
-                cluster_labels = cluster.predict(X_clean)
+            if not do_transpose:
+                if METHOD == 'KMeans':
+                    cluster = KMeans(n_clusters=int(optimal_num), random_state=0).fit(X_clean)
+                    cluster_labels = cluster.labels_
+                elif METHOD == 'GM':
+                    cluster = GaussianMixture(n_components=int(optimal_num), random_state=0).fit(X_clean)
+                    cluster_labels = cluster.predict(X_clean)
 
-            plot_individual_feature(X_clean, cluster_labels, int(optimal_num), feature_kept, feature_plot)
+                plot_individual_feature(X_clean, cluster_labels, int(optimal_num), feature_kept, feature_plot)

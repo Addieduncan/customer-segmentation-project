@@ -216,7 +216,7 @@ def run_svd(pd_data, percent_var=95):
 def data_quantization(pd_data, scale=10):
     """
     Quantize a panda data frame into integer with new features according to the given scale.
-    e.g. if scale = 10: the new feature assign label 1 to the
+    e.g. if scale = 10: the new feature assign label 1 to the first, and 10 to the last
     :param pd_data:
     :param scale:
     :return: data_quantile: the quantized data
@@ -275,7 +275,7 @@ def get_elbow_index(scores):
     return idxOfBestPoint
 
 
-def plot_optimal(Xin, labels, num_comps=4, method='Kmeans', savepath=None):
+def plot_optimal(Xin, labels, num_comps=4, method='Kmeans', savepath=None, annotation = False, ft_select = None):
     """
     Paramters
         :Xin: <np.ndarray, shape (n,d)>  pca transformed data; rows in order of data matrix 
@@ -305,13 +305,25 @@ def plot_optimal(Xin, labels, num_comps=4, method='Kmeans', savepath=None):
     # Find way to wrap this in new iterable
     for cluster in clusters:
         idx = (idx+1) % 20
-        Xcluster = Xin[cluster == labels, :]
+        Xcluster = Xin[cluster == labels,:]
+
+        Xname = np.array(ft_select)[np.where(cluster == labels)[0]]
+
         for comp in range(num_comps-1):
             ax = axs[comp]
             axs[comp].scatter(Xcluster[:, comp], Xcluster[:, comp+1],
                               color=cmap(idx), label='Cluster '+str(cluster))
-            ax.set_xlabel('Component '+str(comp+2))
-            ax.set_ylabel('Component '+str(comp+1))
+            ax.set_xlabel('Component '+str(comp+2), fontsize=14,
+                      fontname="Times New Roman", fontweight='bold')
+            ax.set_ylabel('Component '+str(comp+1),fontsize=14,
+                      fontname="Times New Roman", fontweight='bold')
+
+            if annotation:
+                for (i, txt) in enumerate(Xname):
+                    ax.annotate(txt, (Xcluster[i, comp], Xcluster[i, comp+1] ))
+            else:
+                pass
+
 
     # there is a way to attach the legend to figsave - find this when needed to plot
     # for ax in axs:
@@ -320,7 +332,7 @@ def plot_optimal(Xin, labels, num_comps=4, method='Kmeans', savepath=None):
     
     pass
 
-def elbow_method(X, k_search, method='KMeans', plot=True, savedir = './presimages'):
+def elbow_method(X, k_search, method='KMeans', plot=True, savedir = './presimages', do_transpose = False, feature_select = None):
     """
     Elbow Method for different clustering methods with metrics CHindex, DBindex shown;
     Additionally show SoS for kMeans clustering. And finally plot the silhouette scores
@@ -328,6 +340,7 @@ def elbow_method(X, k_search, method='KMeans', plot=True, savedir = './presimage
     :param k_search: (np.ndarray) list containing the number of clusters to compare over
     :param method: (string) "Kmeans" or "GM" specify the clustering techniques
     :param plot: (boolean) if plotting the results or not
+    :param do_transpose: (boolean) if this is the transpose problem
     :return: 
     """
     # ksearch must be linear for this to work
@@ -415,7 +428,7 @@ def elbow_method(X, k_search, method='KMeans', plot=True, savedir = './presimage
 
 
         center = input(
-            'Now input the center of the fine-search interval (+-4) of the silhouette scores, (press Enter to pass) \n')
+            'Now input the center of the fine-search interval (+-4) of the silhouette scores, (min is 6, press Enter to pass) \n')
 
         if center == '':
             return
@@ -482,6 +495,7 @@ def elbow_method(X, k_search, method='KMeans', plot=True, savedir = './presimage
                 y_lower = y_upper + 5  # 10 for the 0 samples
 
             axs[j].set_title('Num of Cluster: {}'.format(num_cluster))
+            axs[j].set_xlabel('Avg Score = {:.3f}'.format(silh_avg_score))
             axs[j].axvline(x=silh_avg_score, color="red", linestyle="--")
             axs[j].set_yticks([])
         fig.supxlabel('Silhouette Score', fontsize=20,
@@ -506,23 +520,28 @@ def elbow_method(X, k_search, method='KMeans', plot=True, savedir = './presimage
     print("For this number of cluster, the CH score is {}, the DB score is {}".format(CHindex_score2[optimal_indx], DBindex_score2[optimal_indx]))
     
     print('Optimal input was',optimal_num)
-    makePCA = PCA(n_components=X.shape[-1]-1)
+    makePCA = PCA(n_components=np.min((X.shape[0]-1, X.shape[1]-1)))
     makePCA.fit(X)
     Xpca = makePCA.transform(X)
     # Re-run kmeans for optimal number
+
+    if do_transpose:
+        num_comps = 3
+    else:
+        num_comps = 5
 
     #assert (type(optimal_K_1) == int), 'First Optimal KMeans Cluster Value is Not Integer'
     #assert (type(optimal_K_2) == int), 'Second Optimal KMeans Cluster Value is Not Integer'
     if method == 'GM':
         GMMOpt = GaussianMixture(n_components = optimal_num, random_state=0).fit(X)
         optimal_label_gmm = GMMOpt.predict(X)
-        plot_optimal(Xin = Xpca, labels= optimal_label_gmm, num_comps= 5,\
-                     method = method, savepath = savedir+'/optimal_gmm.eps')
+        plot_optimal(Xin = Xpca, labels= optimal_label_gmm, num_comps= num_comps,\
+                     method = method, savepath = savedir+'/optimal_gmm.eps', annotation = do_transpose, ft_select = feature_select)
     elif method == 'KMeans':
         KmeansOpt = KMeans(n_clusters=optimal_num, random_state=0).fit(X)
         optimal_label_kmeans = KmeansOpt.labels_
-        plot_optimal(Xin = Xpca, labels= optimal_label_kmeans, num_comps= 5,\
-                     method = method, savepath = savedir+'/optimal_kmeans.eps')
+        plot_optimal(Xin = Xpca, labels= optimal_label_kmeans, num_comps= num_comps,\
+                     method = method, savepath = savedir+'/optimal_kmeans.eps', annotation = do_transpose, ft_select = feature_select)
             
     # previous way of showing figures
         # for i in range(m):
