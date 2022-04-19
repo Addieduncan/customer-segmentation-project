@@ -310,7 +310,7 @@ def plot_optimal(Xin, labels, num_comps=4, method='Kmeans', savepath=None):
             ax = axs[comp]
             axs[comp].scatter(Xcluster[:, comp], Xcluster[:, comp+1],
                               color=cmap(idx), label='Cluster '+str(cluster))
-            ax.set_xlabel('Component '+str(comp))
+            ax.set_xlabel('Component '+str(comp+2))
             ax.set_ylabel('Component '+str(comp+1))
 
     # there is a way to attach the legend to figsave - find this when needed to plot
@@ -496,6 +496,7 @@ def elbow_method(X, k_search, method='KMeans', plot=True, savedir = './presimage
     plot optimal clustering after decomposition of the data 
     ------------------------------------------------------
     """
+    
     optimal_num = input('Input an integer value for optimal clusters based on inspection: ')
     optimal_num = int(optimal_num.strip())
     
