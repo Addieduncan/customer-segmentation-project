@@ -25,7 +25,7 @@ from datatools import make_clean_data, select_features, \
 Set Parameters for Processing of Data 
 """
 
-def run_elbow(data_set, method, Kmin= 5,Kmax = 50 ,num_K = 46):
+def run_elbow(data_set, method, Kmin= 5,Kmax = 50 ,num_K = 10):
     k_search = np.linspace(start=Kmin, stop=Kmax, num= num_K,dtype = int)
     elbow_method(data_set,k_search, method = method,plot = True)
     
@@ -36,8 +36,8 @@ if __name__ == "__main__":
     """
     1. Set parameters for this file run
     """
-    
-    METHOD = 'GM' #options are 'GM' or 'Kmeans'
+
+    METHOD = 'KMeans' #options are 'GM' or 'KMeans'
 
     dataset = 'basic'  #which dataset; options are 'basic', 'all', or 'freq'
     no_change = False  #Run clustering on cleaned (NaN-removed data). No touching the outliers. 

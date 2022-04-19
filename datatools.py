@@ -317,6 +317,7 @@ def plot_optimal(Xin, labels, num_comps=4, method='Kmeans', savepath=None):
     # for ax in axs:
         # ax.legend()
     fig.show()
+    
     pass
 
 def elbow_method(X, k_search, method='KMeans', plot=True, savedir = './presimages'):
@@ -488,9 +489,6 @@ def elbow_method(X, k_search, method='KMeans', plot=True, savedir = './presimage
         plt.show()
         
         
-    optimal_num = input('Input an integer value for optimal clusters based on inspection: \n')
-    optimal_num = int(optimal_num)
-    
     """
     ---------------- New ---------------
     Need for method to identify optimal clusterings 
@@ -498,6 +496,10 @@ def elbow_method(X, k_search, method='KMeans', plot=True, savedir = './presimage
     plot optimal clustering after decomposition of the data 
     ------------------------------------------------------
     """
+    optimal_num = input('Input an integer value for optimal clusters based on inspection: ')
+    optimal_num = int(optimal_num.strip())
+    
+    print('Optimal input was',optimal_num)
     makePCA = PCA(n_components=X.shape[-1]-1)
     makePCA.fit(X)
     Xpca = makePCA.transform(X)
@@ -510,11 +512,12 @@ def elbow_method(X, k_search, method='KMeans', plot=True, savedir = './presimage
         optimal_label_gmm = GMMOpt.predict(X)
         plot_optimal(Xin = Xpca, labels= optimal_label_gmm, num_comps= 5,\
                      savepath = savedir+'/optimal_gmm.eps')
-    elif method == 'Kmeans':
+    elif method == 'KMeans':
         KmeansOpt = KMeans(n_clusters=optimal_num, random_state=0).fit(X)
         optimal_label_kmeans = KmeansOpt.labels_
         plot_optimal(Xin = Xpca, labels= optimal_label_kmeans, num_comps= 5,\
                      savepath = savedir+'/optimal_kmeans.eps')
+            
     # previous way of showing figures
         # for i in range(m):
         #     plt.plot(k_search, metric_list[i], marker = Markers[i])
