@@ -25,7 +25,7 @@ from datatools import make_clean_data, select_features, \
 Set Parameters for Processing of Data 
 """
 
-def run_elbow(data_set, method, Kmin= 5,Kmax = 50 ,num_K = 10):
+def run_elbow(data_set, method, Kmin= 5,Kmax = 50 ,num_K = 46):
     k_search = np.linspace(start=Kmin, stop=Kmax, num= num_K,dtype = int)
     elbow_method(data_set,k_search, method = method,plot = True)
     
