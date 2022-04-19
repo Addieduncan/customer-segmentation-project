@@ -518,12 +518,12 @@ def elbow_method(X, k_search, method='KMeans', plot=True, savedir = './presimage
         GMMOpt = GaussianMixture(n_components = optimal_num, random_state=0).fit(X)
         optimal_label_gmm = GMMOpt.predict(X)
         plot_optimal(Xin = Xpca, labels= optimal_label_gmm, num_comps= 5,\
-                     savepath = savedir+'/optimal_gmm.eps')
+                     method = method, savepath = savedir+'/optimal_gmm.eps')
     elif method == 'KMeans':
         KmeansOpt = KMeans(n_clusters=optimal_num, random_state=0).fit(X)
         optimal_label_kmeans = KmeansOpt.labels_
         plot_optimal(Xin = Xpca, labels= optimal_label_kmeans, num_comps= 5,\
-                     savepath = savedir+'/optimal_kmeans.eps')
+                     method = method, savepath = savedir+'/optimal_kmeans.eps')
             
     # previous way of showing figures
         # for i in range(m):
