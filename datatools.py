@@ -489,7 +489,7 @@ def elbow_method(X, k_search, method='KMeans', plot=True, savedir = './presimage
         
         
     optimal_num = input('Input an integer value for optimal clusters based on inspection: \n')
-    optimal_num = int(optimal_cluster)
+    optimal_num = int(optimal_num)
     
     """
     ---------------- New ---------------
