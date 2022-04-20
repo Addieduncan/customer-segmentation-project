@@ -578,7 +578,7 @@ def plot_individual_feature(X, labels, num_cluster, feature_list, feature_plot):
         axs = axs.ravel()
         for j in range(len(feature_plot)):
             feature_index = feature_list.index(feature_plot[j])
-            axs[j].hist(ith_cluster_member[:,feature_index], bins=10)
+            axs[j].hist(ith_cluster_member[:,feature_index], bins=10, range=[0, 10])
             axs[j].set_title('Feature {}'.format(feature_plot[j]), fontsize=14,
                       fontname="Times New Roman", fontweight='bold')
             axs[j].set_xlabel('Magnitude of the feature', fontsize=12,
