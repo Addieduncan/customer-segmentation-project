@@ -315,7 +315,7 @@ def plot_optimal(Xin, labels, num_comps=4, method='Kmeans', savepath=None, annot
         for comp in range(num_comps-1):
             ax = axs[comp]
             axs[comp].scatter(Xcluster[:, comp], Xcluster[:, comp+1],
-                              color=cmap(idx), facecolor='none', label='Cluster '+str(cluster))
+                              color=cmap(idx), facecolor='none', s=5, label='Cluster '+str(cluster))
             ax.set_xlabel('Component '+str(comp+2), fontsize=14,
                       fontname="Times New Roman", fontweight='bold')
             ax.set_ylabel('Component '+str(comp+1),fontsize=14,
