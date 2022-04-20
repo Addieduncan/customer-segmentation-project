@@ -325,7 +325,10 @@ def plot_optimal(Xin, labels, num_comps=4, method='Kmeans', savepath=None, annot
                 for (i, txt) in enumerate(Xname):
                     ax.annotate(txt, (Xcluster[i, comp], Xcluster[i, comp+1] ))
             else:
-                pass
+                cluster_mean_x = np.mean(Xcluster[:, comp])
+                cluster_mean_y = np.mean(Xcluster[:, comp+1])
+                ax.annotate(cluster, (cluster_mean_x, cluster_mean_y), weight='bold')
+
 
 
     # there is a way to attach the legend to figsave - find this when needed to plot
