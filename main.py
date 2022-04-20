@@ -65,7 +65,7 @@ if __name__ == "__main__":
     feature_plot = ['CREDIT_LIMIT', 'BALANCE', 'PURCHASES_FREQUENCY', 'PRC_FULL_PAYMENT', 'CASH_ADVANCE_FREQUENCY',\
                     'MINIMUM_PAYMENTS', 'CASH_ADVANCE', 'PURCHASES',  'PURCHASES_INSTALLMENTS_FREQUENCY']
 
-    do_transpose = True
+    do_transpose = False
 
     """
     2. Read In Data

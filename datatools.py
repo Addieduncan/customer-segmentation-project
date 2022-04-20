@@ -297,6 +297,7 @@ def plot_optimal(Xin, labels, num_comps=4, method='Kmeans', savepath=None, annot
     fig, axs = plt.subplots(1, num_comps-1)
     # Custom with used to see component value
     fig.set_size_inches(17.0, 8.0, forward=True)
+    fig.subplots_adjust(wspace=.5)
     fig.suptitle('PCA View of {} Optimal Clustering'.format(method),
                  fontsize=22, fontname="Times New Roman", fontweight='bold')
     cmap = plt.get_cmap('tab20')
@@ -306,8 +307,8 @@ def plot_optimal(Xin, labels, num_comps=4, method='Kmeans', savepath=None, annot
     for cluster in clusters:
         idx = (idx+1) % 20
         Xcluster = Xin[cluster == labels,:]
-
-        Xname = np.array(ft_select)[np.where(cluster == labels)[0]]
+        if annotation: #meaning doing the transpose problem
+            Xname = np.array(ft_select)[np.where(cluster == labels)[0]]
 
         for comp in range(num_comps-1):
             ax = axs[comp]
