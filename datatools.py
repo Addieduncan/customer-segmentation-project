@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import matplotlib
 from tqdm import tqdm
 from kneed import KneeLocator
+from matplotlib.colors import ListedColormap
 
 
 
@@ -300,7 +301,8 @@ def plot_optimal(Xin, labels, num_comps=4, method='Kmeans', savepath=None, annot
     fig.subplots_adjust(wspace=.5)
     fig.suptitle('PCA View of {} Optimal Clustering'.format(method),
                  fontsize=22, fontname="Times New Roman", fontweight='bold')
-    cmap = plt.get_cmap('tab20')
+    #cmap = plt.get_cmap('tab20')
+    cmap = ListedColormap(['#bf5700','#005f86','#a6cd57','#333f48','#f8971f','#ffd600','#579d42','#00a9b7','#9cadb7','#d6d2c4','#f9ac4d','#ffe770','#cde3a1','#9acf8c','#99f7ff','#5cd1ff','#c4ced4'])
     idx = int(0)
 
     # Find way to wrap this in new iterable
@@ -313,7 +315,7 @@ def plot_optimal(Xin, labels, num_comps=4, method='Kmeans', savepath=None, annot
         for comp in range(num_comps-1):
             ax = axs[comp]
             axs[comp].scatter(Xcluster[:, comp], Xcluster[:, comp+1],
-                              color=cmap(idx), label='Cluster '+str(cluster))
+                              color=cmap(idx), facecolor='none', label='Cluster '+str(cluster))
             ax.set_xlabel('Component '+str(comp+2), fontsize=14,
                       fontname="Times New Roman", fontweight='bold')
             ax.set_ylabel('Component '+str(comp+1),fontsize=14,
@@ -398,7 +400,8 @@ def elbow_method(X, k_search, method='KMeans', plot=True, savedir = './presimage
         Markers = ['+', 'o', '*', 'x']
 
         fig = plt.figure(figsize=(15, 5))
-        cmap = plt.get_cmap("tab10")
+        cmap = ListedColormap(['#bf5700','#005f86','#a6cd57','#333f48','#f8971f','#ffd600','#579d42','#00a9b7','#9cadb7','#d6d2c4','#f9ac4d','#ffe770','#cde3a1','#9acf8c','#99f7ff','#5cd1ff','#c4ced4'])
+        #cmap = plt.get_cmap("tab10")
         for i in range(m):
             ax = fig.add_subplot(1, m, i+1)
             ax.plot(k_search, metric_list[i], marker=Markers[i], color=cmap(i))
@@ -478,14 +481,18 @@ def elbow_method(X, k_search, method='KMeans', plot=True, savedir = './presimage
                 size_cluster_i = ith_cluster_silhouette_values.shape[0]
                 y_upper = y_lower + size_cluster_i
 
-                color = matplotlib.cm.nipy_spectral(float(i) / num_cluster)
+                #color = matplotlib.cm.nipy_spectral(float(i) / num_cluster)
+                utcolor = ['#bf5700','#005f86','#a6cd57','#333f48','#f8971f','#ffd600','#579d42','#00a9b7','#9cadb7','#d6d2c4','#f9ac4d','#ffe770','#cde3a1','#9acf8c','#99f7ff','#5cd1ff','#c4ced4']
                 axs[j].fill_betweenx(
                     np.arange(y_lower, y_upper),
                     0,
                     ith_cluster_silhouette_values,
-                    facecolor=color,
-                    edgecolor=color,
-                    alpha=0.7,
+                    #facecolor=color,
+                    #edgecolor=color,
+                    facecolor=utcolor[i],
+                    edgecolor=utcolor[i],
+                    #alpha=0.7,
+                    alpha=1,
                 )
 
                 # Label the silhouette plots with their cluster numbers at the middle

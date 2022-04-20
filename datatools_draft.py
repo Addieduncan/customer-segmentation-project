@@ -531,7 +531,7 @@ def plot_individual_feature(X, labels, num_cluster, feature_list):
     for i in range(num_cluster):
         ith_cluster_member = X[labels == i]
         fig, axs = plt.subplots(3, 3, figsize=(
-            15, 10), facecolor='w', edgecolor='k')
+            15, 10), facecolor='none', edgecolor='k')
         fig.subplots_adjust(hspace=.35, wspace=.2)
         axs = axs.ravel()
         for j in range(X.shape[1]):
