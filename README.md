@@ -1,5 +1,6 @@
-# m393c_project
-Final Project in Pf. Ward's Class Spring 2022 - Credit Card Customer Segmentation
+#Final Project for M393C, Machine Learning with Pf. Rachle Ward
+
+SUMMARY OF HOW TO USE REPO HERE 
 
 ## Business Problem:
 Suppose a mid-sized credit union is looking to effectively target current customers for additional products, such as insurance policies, auto and home loans, banking accounts, or simply additional credit cards with alternative reward programs. As a mid-sized union, a miscalculated digital marketing strategy is both costly, and represents a significant loss of potential revenue: it is even more important for such a business to efficiently allocate budget in digital marketing than for their global-scale competitors. 
