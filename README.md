@@ -9,7 +9,7 @@ Suppose a mid-sized credit union is looking to target current customers for mark
 
 To obtain a baseline for a cost-effective digital marketing strategy, such a credit union could run a customer segmentation analysis on their current customers, thereby obtaining insights into the wealth profiles, spending habits, credit reliability, and financial needs of credit union members. In our project we exhibit techniques of modern data science which take advantage of a full profile of customer features to identify intrinsic patterns in customer credit history. that are generaly obscured by standard spreadsheet analysis.
 
-Written in Python with a Jupyter Notebook format (no GPU compatibility required), our code exemplifies a low-cost way technique for a business with only modest computing architecture to leverage first-principles datascience to grow their revenue by identifying customer behavior profiles. 
+Written in Python with a Jupyter Notebook format (no GPU compatibility required), our code exemplifies a low-cost starting point for a business with only modest computing architecture to deploy first-principles data science to grow their revenue by identifying customer behavior profiles. 
 
 ## Methods:
 The basis of our customer segmentation is to cluster customers based on several credit card usage features. We use [data from Kaggle] that contains information on 14 different attributes for about 8,600 credit card customers over a 6 month period. 8 of these attributes contain information about size (in USD) of customer purchases, payments, balances, cash advances, and credit limits. The other 6 attributes contain information about the frequency of purchases, payments, and cash advances. 
