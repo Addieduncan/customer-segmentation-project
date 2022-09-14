@@ -4,13 +4,15 @@ DATASET: (Kaggle) CreditCard_data.csv
 
 SHORT SUMMARY OF HOW TO USE REPO 
 
+
+Written in Python with a Jupyter Notebook format (no GPU compatibility required), our code exemplifies a low-cost starting point for a business with only modest computing architecture to deploy first-principles data science to grow their revenue by identifying customer behavior profiles
+
 ## Business Problem: 
 Suppose a mid-sized credit union is looking to target current customers for marketing of additional products like insurance policies, auto and home loans, banking accounts, or simply additional credit cards. As a mid-sized union, a miscalculated digital marketing strategy represents a significant cost, while successful marketing increases access to potential revenue. For such as business, efficient resource allocation for marketing initiatives is more important than for their global-scale competitors. 
 
 To obtain a baseline for a cost-effective digital marketing strategy, such a credit union could run a customer segmentation analysis on their current customers, thereby obtaining insights into the wealth profiles, spending habits, credit reliability, and financial needs of credit union members. In our project we exhibit techniques of modern data science which take advantage of a full profile of customer features to identify intrinsic patterns in customer credit history that are generaly obscured by standard spreadsheet analysis.
 
-Written in Python with a Jupyter Notebook format (no GPU compatibility required), our code exemplifies a low-cost starting point for a business with only modest computing architecture to deploy first-principles data science to grow their revenue by identifying customer behavior profiles. We use [data from Kaggle] that contains information on 14 attributes for +8,600 credit card customers, over a 6 month period. These attributes are split between information in USD regarding purchases, payments, balances, cash advances, and credit limits, while the other 6 attributes contain information about the frequency of account activity. 
-
+We use [data from Kaggle] that contains information on 14 attributes for +8,600 credit card customers, over a 6 month period. These attributes are split between information in USD regarding purchases, payments, balances, cash advances, and credit limits, while the other 6 attributes contain information about the frequency of account activity. 
 ## Methods:
 
 We applying two distinct clustering algorithms combined with different methods for cleaning the data (removing outliers) and methods for rendering features comparable (quantization, standardization). We then analzye the results of the clustering and preprocessing algorithm which yields the most "robust" clusters, according to metrics here described. 
