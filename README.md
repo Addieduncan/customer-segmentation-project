@@ -2,7 +2,7 @@
 
 DATASET: (Kaggle) CreditCard_data.csv
 
-Rapid Summary Here of How to Use Repo, and Data Type   
+SHORT SUMMARY OF HOW TO USE REPO 
 
 ## Business Problem To Solve:
 Suppose a mid-sized credit union is looking to target current customers for marketing of additional products like insurance policies, auto and home loans, banking accounts, or simply additional credit cards. As a mid-sized union, a miscalculated digital marketing strategy represents a significant cost, while successful marketing increases access to potential revenue. For such as business, efficient resource allocation for this marketing initiative is more important than for their global-scale competitors. 
