@@ -24,4 +24,4 @@ The next step is to tune the parameters of our k-means model. We use several [er
 
 Now we have a robust process for determining 9 groups of customer types based on 14 credit card usage features. Using principal component analysis to project our data onto the first two principal components we can visually identify the [9 customer groupings](https://github.com/Addieduncan/m393c_project/blob/20248cd2e5e6b3e24c12b867e0e511fdb605165d/images/PCA%20clusters/q_km_9_pca.png) in our data. For each of our customer groups we can analyze the [feature distribution of the customers in each group](https://github.com/Addieduncan/m393c_project/tree/master/images/Individual_Feature/feature%20distributions) to learn information about their purchasing and payment habits. 
 
-## Conclusions on Customer Behavior Profiles: 
+## Conclusions - Customer Behavior Profiles: 
