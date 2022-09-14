@@ -1,11 +1,13 @@
 #Final Project for M393C, Machine Learning with Pf. Rachle Ward
 
-SUMMARY OF HOW TO USE REPO HERE 
+Rapid Summary Here of How to Use Repo, and Data Type   
 
-## Business Problem:
-Suppose a mid-sized credit union is looking to effectively target current customers for additional products, such as insurance policies, auto and home loans, banking accounts, or simply additional credit cards with alternative reward programs. As a mid-sized union, a miscalculated digital marketing strategy is both costly, and represents a significant loss of potential revenue: it is even more important for such a business to efficiently allocate budget in digital marketing than for their global-scale competitors. 
+## Business Problem To Solve:
+Suppose a mid-sized credit union is looking to target current customers for marketing of additional products like insurance policies, auto and home loans, banking accounts, or simply additional credit cards. As a mid-sized union, a miscalculated digital marketing strategy represents a significant cost, while successful marketing increases access to potential revenue. For such as business, efficient resource allocation for this marketing initiative is more important than for their global-scale competitors. 
 
-Customer segmentation can provide insights into wealth profiles, spending habits, credit reliability, and needs of credit union members: this provides the baseline for a targeted digital marketing strategy. In our project we exhibit modern data science techniques, utilizing a full profile of customer features, to identify intrinsic patterns in the data that are rarely found in standard spreadsheet analysis.
+To obtain a baseline for a cost-effective digital marketing strategy, such a credit union could run a customer segmentation analysis on their current customers, thereby obtaining insights into the wealth profiles, spending habits, credit reliability, and financial needs of credit union members. In our project we exhibit techniques of modern data science, taking advantage of a full profile of customer features, to identify intrinsic patterns in customer credit history that are generaly obscured by standard spreadsheet analysis.
+
+Our customer-segmentation code is written in Python with a Jupyter Notebook format, and doesn't require  GPU compatibility. Our data, from Kaggle, contains information on 14 different numerical features of +8600 credit card customers, over 6 months of behvaior. The result is a fast and portable analysis that one can run locally to obtain insight into the
 
 ## Methods:
 The basis of our customer segmentation is to cluster customers based on several credit card usage features. We use [data from Kaggle](https://github.com/Addieduncan/m393c_project/blob/b9e4bd4bae46f2e8c05811dbf0396f99d9ec28e3/raw_data/CreditCard_data.csv) that contains information on 14 different attributes for about 8,600 credit card customers over a 6 month period. 8 of these attributes contain information about size (in USD) of customer purchases, payments, balances, cash advances, and credit limits. The other 6 attributes contain information about the frequency of purchases, payments, and cash advances. 
