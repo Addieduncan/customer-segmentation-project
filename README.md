@@ -4,7 +4,7 @@ DATASET: (Kaggle) CreditCard_data.csv
 
 SHORT SUMMARY OF HOW TO USE REPO 
 
-## Business Problem To Solve:
+## Business Problem: 
 Suppose a mid-sized credit union is looking to target current customers for marketing of additional products like insurance policies, auto and home loans, banking accounts, or simply additional credit cards. As a mid-sized union, a miscalculated digital marketing strategy represents a significant cost, while successful marketing increases access to potential revenue. For such as business, efficient resource allocation for this marketing initiative is more important than for their global-scale competitors. 
 
 To obtain a baseline for a cost-effective digital marketing strategy, such a credit union could run a customer segmentation analysis on their current customers, thereby obtaining insights into the wealth profiles, spending habits, credit reliability, and financial needs of credit union members. In our project we exhibit techniques of modern data science which take advantage of a full profile of customer features to identify intrinsic patterns in customer credit history that are generaly obscured by standard spreadsheet analysis.
