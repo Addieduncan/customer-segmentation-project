@@ -1,9 +1,8 @@
-#Final Project for M393C, Machine Learning with Pf. Rachle Ward
+#Final Project for M393C, Machine Learning with Pf. Rachel Ward
 
 DATASET: (Kaggle) CreditCard_data.csv
 
 SHORT SUMMARY OF HOW TO USE REPO 
-
 
 Written in Python with a Jupyter Notebook format (no GPU compatibility required), our code exemplifies a low-cost starting point for a business with only modest computing architecture to deploy first-principles data science to grow their revenue by identifying customer behavior profiles
 
