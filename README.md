@@ -1,4 +1,4 @@
-#Customer Segmentation via Credit Card Reporting Data 
+# Customer Segmentation via Credit Card Reporting Data 
 
 Written in Python, our project leaverages modern techniques in data-science like K-Means clustering and Gaussian Mixture models to segment customer credit reporting data into behavior profiles. 
 
