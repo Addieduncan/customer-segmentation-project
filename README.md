@@ -1,5 +1,4 @@
-# Customer Segmentation Of Credit Reporting Data 
-
+#Customer Segmentation in Credit Reporting Data
 Written in Python, our project leaverages modern techniques in data-science like K-Means clustering and Gaussian Mixture models to segment customer credit reporting data into behavior profiles. 
 
 The Code: After pulling the repo, run the main.py script (m393c_project/main.py) to see the clusters computed and visualizations generated. Parameters can be adjusted. 
