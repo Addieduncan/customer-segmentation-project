@@ -1,10 +1,10 @@
-#Final Project for M393C, Machine Learning with Pf. Rachel Ward
+# Final Project for M393C, Machine Learning, with Pf. Rachel Ward
 
-Using The Code: After pulling the repo, run the main.py script to see the clusters computed. 
+Written in Python, our project leaverages modern techniques in data-science like K-Means clustering and Gaussian Mixture models to segment customer credit reporting data into behavior profiles. 
 
-The Dataset: From Kaggle CreditCard_data.csv 
+The Code: After pulling the repo, run the main.py script (m393c_project/main.py) to see the clusters computed and visualizations generated. Parameters can be adjusted. 
 
-Written in Python with a Jupyter Notebook format (no GPU compatibility required), our code leaverages modern techniques in datascience  to segment customer credit reporting history data into behavior profiles, leaeraging modern techniques in datascience, like K-Means clustering and Gaussian Mixture Models. 
+The Dataset: From Kaggle - m393c_project/raw_data/CreditCard_data.csv 
 
 ## Business Problem: 
 Suppose a mid-sized credit union is looking to target current customers for marketing of additional products like insurance policies, auto and home loans, banking accounts, or simply additional credit cards. As a mid-sized union, a miscalculated digital marketing strategy represents a significant cost, while successful marketing increases access to potential revenue. For such as business, efficient resource allocation for marketing initiatives is more important than for their global-scale competitors. 
